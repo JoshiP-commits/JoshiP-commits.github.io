@@ -52,7 +52,9 @@ html { -webkit-text-size-adjust:100% }
 body { margin:0; background:var(--paper); color:var(--ink);
   font-family:var(--font-text); font-size:1.125rem; line-height:1.62; font-optical-sizing:auto }
 
-.hero { background:radial-gradient(110% 70% at 50% -20%, #2b2b15 0%, rgba(43,43,21,0) 60%), var(--hero-bg);
+.hero { background:
+    repeating-linear-gradient(180deg, rgba(255,255,255,.016) 0 1px, transparent 1px 3px),
+    radial-gradient(110% 70% at 50% -20%, #2b2b15 0%, rgba(43,43,21,0) 60%), var(--hero-bg);
   color:var(--hero-ink); border-bottom:1px solid var(--hero-rule) }
 .hero-in { max-width:50rem; margin-inline:auto;
   padding-left:max(20px, env(safe-area-inset-left,0px));
@@ -65,7 +67,7 @@ h1 { margin:1.5rem 0 0; font-family:var(--font-display); font-weight:600;
   font-size:clamp(3rem,11vw,6rem); line-height:0.9; letter-spacing:0.005em;
   text-transform:uppercase; color:var(--hero-ink) }
 h1 .lit { color:var(--hero-accent) }
-.rule { width:4rem; height:3px; background:var(--hero-accent); margin:1rem 0 1.1rem }
+.rule { width:5.5rem; height:3px; background:var(--hero-accent); margin:1.05rem 0 1.15rem }
 .sub { margin:0 0 1.4rem; max-width:34rem; color:var(--hero-muted); font-size:1.1rem }
 .meta { margin:0; font-family:var(--font-mono); font-size:0.76rem; color:var(--hero-muted) }
 .meta .tag { display:inline-block; margin-left:0.45rem; padding:0.1em 0.5em; border-radius:2px;
@@ -79,13 +81,38 @@ h1 .lit { color:var(--hero-accent) }
 .toplinks a:hover { color:var(--hero-accent); border-bottom-color:var(--hero-accent) }
 .headline { display:grid; grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));
   gap:1px; margin:1.9rem 0 0; background:var(--hero-rule); border:1px solid var(--hero-rule) }
-.headline div { background:var(--hero-bg); padding:0.85rem 1rem }
+.headline div { background:var(--hero-bg); padding:1rem 1.1rem 1.05rem }
 .headline dt { margin:0 0 0.3rem; font-family:var(--font-mono); font-size:0.64rem;
   letter-spacing:0.07em; text-transform:uppercase; color:var(--hero-muted) }
-.headline dd { margin:0; font-size:1.4rem; font-weight:500; font-variant-numeric:tabular-nums;
-  line-height:1.1; color:var(--hero-ink) }
+.headline dd { margin:0; font-size:1.85rem; font-weight:500; font-variant-numeric:tabular-nums;
+  line-height:1.05; color:var(--hero-accent); letter-spacing:-0.01em }
 .headline dd small { display:block; margin-top:0.2rem; font-family:var(--font-mono);
   font-size:0.68rem; color:var(--hero-muted); font-weight:400 }
+
+/* eyebrow labels above section headings */
+.eyebrow { font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.16em;
+  text-transform:uppercase; color:var(--accent); margin:3.4rem 0 0.3rem }
+.eyebrow + h2 { margin-top:0 }
+
+/* framed figures with a plate label */
+figure.framed { border:1px solid var(--rule); border-radius:4px; background:var(--surface);
+  padding:1.15rem 1.15rem 1rem }
+.figlabel { display:flex; align-items:baseline; gap:0.6rem; margin-bottom:0.85rem;
+  font-family:var(--font-mono); font-size:0.64rem; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--muted) }
+.figlabel b { color:var(--accent); font-weight:600; letter-spacing:0.1em }
+figure.framed figcaption { margin-left:0; margin-right:0; max-width:46rem }
+
+/* pull quote for the central finding */
+blockquote.pull { margin:2.25rem 0 0; padding:0.2rem 0 0.2rem 1.5rem;
+  border-left:3px solid var(--accent); font-size:1.3rem; line-height:1.42;
+  max-width:33rem; color:var(--ink) }
+blockquote.pull strong { color:var(--accent); font-weight:600 }
+blockquote.pull cite { display:block; margin-top:0.7rem; font-family:var(--font-mono);
+  font-size:0.72rem; font-style:normal; letter-spacing:0.06em; color:var(--muted) }
+
+tbody tr { transition:background 120ms ease }
+tbody tr:hover { background:var(--accent-weak) }
 
 .page { max-width:50rem; margin-inline:auto;
   padding-left:max(20px, env(safe-area-inset-left,0px));
@@ -241,6 +268,7 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
 
 <div class="page">
 
+  <p class="eyebrow">In one minute</p>
   <h2>Summary</h2>
   <p>
     Every new attention variant loses PyTorch's fast kernel. GraphSynth writes a
@@ -254,6 +282,7 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
     32.02&#215;, and the kernels had not changed.
   </p>
 
+  <p class="eyebrow">The problem</p>
   <h2>The gap</h2>
   <p>
     Attention scores every pair of tokens, turns the scores into weights, then
@@ -275,6 +304,7 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
     operators have no fast kernel anywhere.
   </p>
 
+  <p class="eyebrow">Method</p>
   <h2>How it works</h2>
   <p>Five stages. A program runs four of them. A language model runs one.</p>
 
@@ -322,7 +352,8 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
     </li>
   </ol>
 
-  <figure class="breakout">
+  <figure class="breakout framed">
+    <p class="figlabel"><b>Fig. 1</b> the loop as a dataflow graph</p>
     <div class="scroller">
 <svg viewBox="0 0 1180 500" role="img" aria-labelledby="loopt" class="loop">
 <title id="loopt">The GraphSynth CHIA dataflow graph: five stages across two workers, with the agent-reachable surface marked</title>
@@ -446,6 +477,7 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
     </figcaption>
   </figure>
 
+  <p class="eyebrow">Isolation</p>
   <h2>What the model can reach</h2>
   <p>
     If a model can call the thing that grades it, it will optimise the grader.
@@ -475,13 +507,15 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
     model receives.
   </p>
 
+  <p class="eyebrow">Result 01</p>
   <h2>Results on an A100</h2>
   <p>
     bf16, <em>B</em>=2, <em>H</em>=32, <em>S</em>=2048, <em>D</em>=128. Every
     kernel here passed the check before it was timed.
   </p>
 
-  <figure class="breakout">
+  <figure class="breakout framed">
+    <p class="figlabel"><b>Fig. 2</b> A100 speedup over eager PyTorch</p>
     <div class="scroller">
 <svg viewBox="0 0 590 328" role="img" aria-labelledby="c1t" class="chart">
 <title id="c1t">GraphSynth speedup over eager PyTorch on the A100, per operator</title>
@@ -536,6 +570,7 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
     </figcaption>
   </figure>
 
+  <p class="eyebrow">Result 02</p>
   <h2>The same kernels on a second GPU</h2>
   <p>
     We ran the loop again on an NVIDIA L40S. The geometric mean went from
@@ -547,13 +582,15 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
     limited by bandwidth, so it slowed down. The synthesized kernels never write
     the score matrix, so they did not.
   </p>
-  <p>
-    That makes a prediction. If the baseline's runtime is memory traffic alone,
-    it should slow by 1555/864 = 1.800&#215;. Across all ten operators it slowed
-    by <strong>1.795&#215;</strong>.
-  </p>
+  <blockquote class="pull">
+    If the baseline's runtime is memory traffic alone, it should slow by
+    1555/864 = 1.800&#215;. Across all ten operators it slowed by
+    <strong>1.795&#215;</strong>.
+    <cite>A prediction that could have failed, and did not</cite>
+  </blockquote>
 
-  <figure class="breakout">
+  <figure class="breakout framed">
+    <p class="figlabel"><b>Fig. 3</b> L40S over A100 latency ratio</p>
     <div class="scroller">
 <svg viewBox="0 0 590 328" role="img" aria-labelledby="c2t" class="chart">
 <title id="c2t">L40S over A100 latency ratio for the eager baseline and the synthesized kernel</title>
@@ -641,6 +678,7 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
     </figcaption>
   </figure>
 
+  <p class="eyebrow">Full table</p>
   <h2>Every number, per operator</h2>
   <div class="tablewrap">
     <table>
@@ -746,6 +784,7 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
     pattern or mask.
   </p>
 
+  <p class="eyebrow">Field notes</p>
   <h2>What the first real run exposed</h2>
   <p>
     The measurement stages had never run on a GPU before this evaluation. Three
@@ -777,6 +816,7 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
     ruled that out.
   </p>
 
+  <p class="eyebrow">Scope</p>
   <h2>Limitations</h2>
   <p>
     These kernels were written for the A100 and re-checked on Ada. The
