@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Joshi Penta</title>
+<meta name="description" content="Joshi Penta — research student at SARCS Lab, IIIT Hyderabad. Agentic systems for GPU kernel synthesis and performance verification.">
+
+<!-- Open Graph: controls how the link looks when shared -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Joshi Penta">
+<meta property="og:description" content="Research student at SARCS Lab, IIIT Hyderabad. Agentic systems for GPU kernel synthesis and performance verification.">
+<meta property="og:url" content="https://joship-commits.github.io/">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230c6460'/><path d='M7 23 L13 23 L13 13 L19 13 L19 23 L25 23' fill='none' stroke='%23f7f7f4' stroke-width='2.4' stroke-linejoin='round' stroke-linecap='round'/></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+/* Layout: one left-aligned column of prose, max 68ch, with a mono label rail
+   in the left margin that collapses to a line above each block on phones. */
+:root {
+  --paper:       #fbfaf7;
+  --surface:     #f2f1ec;
+  --ink:         #15191a;
+  --muted:       #5d6a6b;
+  --rule:        #ddddd6;
+  --accent:      #0c6460;
+  --accent-weak: #0c646015;
+
+  --font-text: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:       #101414;
+    --surface:     #171d1d;
+    --ink:         #e8e7e1;
+    --muted:       #98a4a4;
+    --rule:        #2a3333;
+    --accent:      #5fc9bf;
+    --accent-weak: #5fc9bf1a;
+    color-scheme: dark;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  font-optical-sizing: auto;
+}
+
+.page {
+  max-width: 54rem;
+  margin-inline: auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  padding-block: 4.5rem 3rem;
+}
+
+/* ---------- header ---------- */
+
+header { display: flex; flex-direction: column; gap: 0.5rem; }
+
+h1 {
+  margin: 0;
+  font-size: clamp(2.3rem, 6vw, 3.1rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.standfirst {
+  margin: 0;
+  max-width: 34rem;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+.standfirst a { color: inherit; }
+
+/* ---------- link row ---------- */
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  margin-top: 1.25rem;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+
+.links a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 1px;
+}
+
+.links a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ---------- sections with a label rail ---------- */
+
+main { display: flex; flex-direction: column; gap: 3.25rem; margin-top: 3.5rem; }
+
+section { display: grid; grid-template-columns: 7.5rem 1fr; gap: 0 2rem; }
+
+.rail {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 0.45rem;
+}
+
+.body > :first-child { margin-top: 0; }
+.body > :last-child  { margin-bottom: 0; }
+.body p { margin: 0 0 1rem; max-width: 36rem; }
+
+h2 {
+  margin: 0 0 0.9rem;
+  font-size: 1.45rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+
+/* ---------- publication entry ---------- */
+
+.pub { padding-block: 0.25rem; }
+.pub + .pub { margin-top: 1.9rem; border-top: 1px solid var(--rule); padding-top: 1.9rem; }
+
+.pub h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.3;
+  max-width: 36rem;
+  text-wrap: balance;
+}
+
+.authors { margin: 0 0 0.15rem; font-size: 1rem; }
+.authors .me { font-weight: 600; }
+
+.venue { margin: 0 0 0.75rem; font-size: 0.95rem; color: var(--muted); font-style: italic; }
+
+.badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.08em 0.5em;
+  border-radius: 2px;
+  background: var(--accent-weak);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-style: normal;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: 1px;
+}
+
+.pub-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.pub-links a { text-decoration: none; border-bottom: 1px solid var(--accent-weak); }
+.pub-links a:hover { border-bottom-color: var(--accent); }
+
+/* ---------- measured-result readout ---------- */
+
+.readout {
+  margin: 1.1rem 0 0;
+  padding: 0.9rem 1.1rem;
+  background: var(--surface);
+  border-left: 2px solid var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.75;
+  font-variant-numeric: tabular-nums;
+  max-width: 36rem;
+  overflow-x: auto;
+}
+
+.readout dl { display: grid; grid-template-columns: 1fr auto; gap: 0 1.5rem; margin: 0; }
+.readout dt { color: var(--muted); min-width: 0; }
+.readout dd { margin: 0; text-align: right; white-space: nowrap; }
+.readout .hi { color: var(--accent); font-weight: 500; }
+
+/* ---------- interests ---------- */
+
+ul.plain { margin: 0; padding-left: 1.1rem; max-width: 36rem; }
+ul.plain li { margin-bottom: 0.4rem; }
+
+/* ---------- footer ---------- */
+
+footer {
+  margin-top: 4rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* ---------- focus + motion ---------- */
+
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ---------- phone ---------- */
+
+@media (max-width: 42rem) {
+  body { font-size: 1.06rem; }
+  .page { padding-block: 3rem 2.5rem; }
+  main { gap: 2.75rem; margin-top: 2.75rem; }
+  section { grid-template-columns: 1fr; gap: 0.6rem; }
+  .rail { padding-top: 0; }
+  .readout dl { grid-template-columns: 1fr; gap: 0; }
+  .readout dd { text-align: left; margin-bottom: 0.35rem; }
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+  <header>
+    <h1>Joshi Penta</h1>
+    <!-- EDIT: your degree and year, e.g. "MS by Research (2nd year)" -->
+    <p class="standfirst">
+      Research student at
+      <a href="https://www.iiit.ac.in/">SARCS Lab, IIIT Hyderabad</a>.
+      I work on agentic systems that write and verify GPU kernels.
+    </p>
+
+    <ul class="links">
+      <li><a href="mailto:joshi.penta@research.iiit.ac.in">Email</a></li>
+      <li><a href="https://github.com/JoshiP-commits">GitHub</a></li>
+      <!-- EDIT: replace with your real profile URLs, or delete the line -->
+      <li><a href="#">Google&nbsp;Scholar</a></li>
+      <li><a href="#">LinkedIn</a></li>
+      <li><a href="cv.pdf">CV</a></li>
+    </ul>
+  </header>
+
+  <main>
+
+    <section>
+      <p class="rail">Research</p>
+      <div class="body">
+        <h2>What I work on</h2>
+        <p>
+          GPU kernels for operators that fall outside a framework's fused-kernel
+          catalog, and the problem of trusting a system that writes them
+          automatically. A loop that generates code is only as good as the gate
+          that judges it, so most of my attention goes to the gate: what it can
+          see, what the generator can reach, and whether a result that passes
+          once still holds when the shape or the hardware changes.
+        </p>
+        <ul class="plain">
+          <li>Agentic code generation with verification in the loop</li>
+          <li>Triton and GPU performance analysis — roofline, bandwidth, occupancy</li>
+          <li>Reproducibility and measurement validity in systems benchmarking</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <p class="rail">Publications</p>
+      <div class="body">
+        <h2>Publications</h2>
+
+        <article class="pub">
+          <h3>
+            GraphSynth: Agentic Triton Kernel Synthesis for Non-Standard
+            Attention, Verified Across GPU Generations
+          </h3>
+          <p class="authors"><span class="me">Joshi Penta</span>, Priyesh Shukla</p>
+          <p class="venue">
+            A3: Agentic Approaches to Architecture, co-located with MICRO 2026
+            <span class="badge">Paper + Poster</span>
+          </p>
+          <p>
+            An LLM-driven Triton synthesis workflow expressed as a CHIA dataflow
+            graph: four stages, exactly one agentic edge, and a correctness gate
+            that is never registered as a tool — so the model being judged cannot
+            reach it. Re-running on a second GPU generation showed the reported
+            speedup nearly tripling while the kernels stayed identical, because
+            the eager baseline is bandwidth-bound and the synthesized kernels
+            are not.
+          </p>
+
+          <div class="readout">
+            <dl>
+              <dt>operators verified, A100</dt>
+              <dd><span class="hi">10 / 10</span></dd>
+              <dt>geomean over eager PyTorch</dt>
+              <dd>10.82&times;</dd>
+              <dt>geomean over torch.compile</dt>
+              <dd>3.04&times;</dd>
+              <dt>re-verified on L40S</dt>
+              <dd><span class="hi">9 / 10</span> at 32.02&times;</dd>
+              <dt>eager baseline, L40S / A100</dt>
+              <dd>1.795&times; measured</dd>
+              <dt>predicted from bandwidth alone</dt>
+              <dd><span class="hi">1.800&times;</span></dd>
+            </dl>
+          </div>
+
+          <ul class="pub-links" style="margin-top:1.1rem">
+            <!-- EDIT: point these at the final files once you have them -->
+            <li><a href="assets/graphsynth-a3-micro-2026.pdf">Paper</a></li>
+            <li><a href="https://github.com/JoshiP-commits/CHIA_HACKATHON">Code</a></li>
+            <li><a href="assets/graphsynth-poster.pdf">Poster</a></li>
+            <li><a href="#">arXiv</a></li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+
+    <section>
+      <p class="rail">Contact</p>
+      <div class="body">
+        <h2>Get in touch</h2>
+        <p>
+          Email is best:
+          <a href="mailto:joshi.penta@research.iiit.ac.in"><span class="mono">joshi.penta@research.iiit.ac.in</span></a>.
+          I am at MICRO 2026 presenting the GraphSynth poster at the A3 workshop
+          — happy to talk about kernel synthesis, verification, or anything
+          measured on real hardware.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <!-- EDIT: bump this when you update the page -->
+    Last updated October 2026 · Built as a single static page
+  </footer>
+
+</div>
+</body>
+</html>
