@@ -338,6 +338,27 @@ footer { margin-top:4rem; padding-top:1.25rem; border-top:1px solid var(--rule);
 a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:2px }
 @media (prefers-reduced-motion:reduce){ *,*::before,*::after{animation:none!important;transition:none!important} }
 @media (max-width:42rem){ body{font-size:1.06rem} h2{margin-top:2.5rem} .breakout{width:100%;margin-left:0;transform:none} }
+
+/* ---------- plain-English table reader ---------- */
+
+.tread { margin:1.1rem 0 0; padding:1.1rem 0 0; border-top:1px solid var(--rule) }
+.tread-lead { margin:0 0 0.8rem; font-size:1rem; color:var(--muted) }
+.tread-cols { display:flex; flex-wrap:wrap; gap:0.4rem; margin-bottom:0.9rem }
+.tread-cols button {
+  font-family:var(--font-mono); font-size:0.76rem; padding:0.34rem 0.7rem;
+  background:transparent; color:var(--muted); border:1px solid var(--rule);
+  border-radius:0; cursor:pointer }
+.tread-cols button:hover { color:var(--accent); border-color:var(--accent) }
+.tread-cols button[aria-pressed="true"] {
+  background:var(--accent); border-color:var(--accent); color:var(--paper); font-weight:500 }
+.tread-cols button:focus-visible { outline:2px solid var(--accent); outline-offset:2px }
+.tread-say { margin:0; min-height:3.2em; font-size:1.06rem; max-width:46rem }
+.tread-say b { color:var(--accent); font-weight:600 }
+
+#fulltable tbody tr { cursor:pointer }
+#fulltable tbody tr:focus-visible { outline:2px solid var(--accent); outline-offset:-2px }
+#fulltable tbody tr.picked { background:var(--accent-weak) }
+#fulltable tbody tr.picked th { box-shadow:inset 2px 0 0 var(--accent) }
 </style>
 </head>
 
@@ -868,7 +889,7 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
   <p class="eyebrow">Full table</p>
   <h2>Every number, per operator</h2>
   <div class="tablewrap">
-    <table>
+    <table id="fulltable">
       <caption>Latency in microseconds, lower is better. A dash means that path cannot express the operator.</caption>
       <thead>
         <tr>
@@ -964,6 +985,13 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
       </tfoot>
     </table>
   </div>
+  <div class="tread">
+    <p class="tread-lead">Not sure what you are looking at? Pick a column to see what it
+      measures, or click any row to read its numbers in words.</p>
+    <div class="tread-cols" id="tread-cols" role="group" aria-label="Explain a column"></div>
+    <p class="tread-say" id="tread-say" role="status" aria-live="polite"></p>
+  </div>
+
   <p style="margin-top:1.25rem">
     <code>flex_attention</code> is 1.82&#215; faster than GraphSynth on the eight
     operators it can express. Where a tuned template fits, the template wins.
@@ -1248,6 +1276,68 @@ geometric mean speedup over eager: 10.83x</pre>
     g.addEventListener('mouseleave', untell);
     g.addEventListener('focus', tell);
     g.addEventListener('blur', untell);
+  });
+})();
+</script>
+
+<script>
+/* Table reader: every sentence below is generated from the same numbers the
+   table prints, so the two can never drift apart. */
+(function () {
+  var D = {"ops": [{"op": "block-diagonal", "say": "Plain PyTorch needs 8,252 microseconds. The synthesized kernel does it in 290 — 28.5× faster. torch.compile reaches 2,586, still 8.9× slower than the kernel. flex_attention wins this row at 261, 1.11× ahead of the kernel. The same kernel, unchanged, on the L40S: 198."}, {"op": "sliding-window", "say": "Plain PyTorch needs 8,333 microseconds. The synthesized kernel does it in 433 — 19.2× faster. torch.compile reaches 2,589, still 6.0× slower than the kernel. flex_attention wins this row at 226, 1.92× ahead of the kernel. The same kernel, unchanged, on the L40S: 269."}, {"op": "ReLU attention", "say": "Plain PyTorch needs 8,536 microseconds. The synthesized kernel does it in 472 — 18.1× faster. torch.compile reaches 1,998, still 4.2× slower than the kernel. flex_attention cannot express this operator at all, so there is no entry. The same kernel, unchanged, on the L40S: 417."}, {"op": "local window", "say": "Plain PyTorch needs 8,390 microseconds. The synthesized kernel does it in 662 — 12.7× faster. torch.compile reaches 2,646, still 4.0× slower than the kernel. flex_attention wins this row at 402, 1.65× ahead of the kernel. The same kernel, unchanged, on the L40S: 401."}, {"op": "ALiBi bias", "say": "Plain PyTorch needs 11,080 microseconds. The synthesized kernel does it in 845 — 13.1× faster. torch.compile reaches 2,629, still 3.1× slower than the kernel. flex_attention wins this row at 641, 1.32× ahead of the kernel. The same kernel, unchanged, on the L40S: 527."}, {"op": "soft-capping", "say": "Plain PyTorch needs 10,645 microseconds. The synthesized kernel does it in 901 — 11.8× faster. torch.compile reaches 3,139, still 3.5× slower than the kernel. flex_attention wins this row at 847, 1.06× ahead of the kernel. The same kernel, unchanged, on the L40S: 620."}, {"op": "sigmoid attention", "say": "Plain PyTorch needs 8,537 microseconds. The synthesized kernel does it in 1,074 — 7.9× faster. torch.compile reaches 1,994, still 1.9× slower than the kernel. flex_attention cannot express this operator at all, so there is no entry. The same kernel, unchanged, on the L40S: 592."}, {"op": "prefix-LM", "say": "Plain PyTorch needs 8,336 microseconds. The synthesized kernel does it in 1,390 — 6.0× faster. torch.compile reaches 2,585, still 1.9× slower than the kernel. flex_attention wins this row at 557, 2.50× ahead of the kernel. The same kernel, unchanged, on the L40S: 1,000."}, {"op": "dilated", "say": "Plain PyTorch needs 8,441 microseconds. The synthesized kernel does it in 1,817 — 4.6× faster. torch.compile reaches 2,594, still 1.4× slower than the kernel. flex_attention wins this row at 571, 3.18× ahead of the kernel. The same kernel, unchanged, on the L40S: 1,120."}, {"op": "per-head temp", "say": "Plain PyTorch needs 9,522 microseconds. The synthesized kernel does it in 1,875 — 5.1× faster. torch.compile reaches 2,643, still 1.4× slower than the kernel. flex_attention wins this row at 614, 3.05× ahead of the kernel. This kernel never compiled on the L40S — its block size needs more shared memory than that GPU has."}], "cols": [{"k": "Operator", "say": "The attention variant being tested. Each one changes a single step of standard attention — the scores, the mask, or the softmax itself."}, {"k": "eager", "say": "Plain PyTorch, one operation at a time, no fusion. It writes the full score matrix to memory. This is the slow path every new variant falls back to."}, {"k": "torch.compile", "say": "PyTorch’s automatic compiler. It fuses some of the work, but it cannot rebuild the hand-written fused attention kernel."}, {"k": "flex_attention", "say": "PyTorch’s template for attention variants. Fast where it fits, but it only handles changes to the scores — not changes to softmax. A dash means the operator cannot be written in it."}, {"k": "GraphSynth", "say": "The kernel this loop wrote, measured on the A100. Every one was checked against PyTorch before it was timed."}, {"k": "GraphSynth L40S", "say": "The same kernel file, not re-tuned, measured on a second GPU generation two years newer."}]};
+  var table = document.getElementById('fulltable');
+  var say   = document.getElementById('tread-say');
+  var colbox= document.getElementById('tread-cols');
+  if (!table || !say || !colbox) return;
+
+  var byOp = {};
+  D.ops.forEach(function (o) { byOp[o.op] = o.say; });
+
+  function tell(html) { say.innerHTML = html; }
+
+  function clearCols() {
+    colbox.querySelectorAll('button').forEach(function (b) {
+      b.setAttribute('aria-pressed', 'false'); });
+  }
+  function clearRows() {
+    table.querySelectorAll('tbody tr').forEach(function (r) {
+      r.classList.remove('picked'); });
+  }
+
+  D.cols.forEach(function (c) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = c.k;
+    b.setAttribute('aria-pressed', 'false');
+    b.addEventListener('click', function () {
+      var on = b.getAttribute('aria-pressed') === 'true';
+      clearCols(); clearRows();
+      if (on) { tell(''); return; }
+      b.setAttribute('aria-pressed', 'true');
+      tell('<b>' + c.k + '</b> &mdash; ' + c.say);
+    });
+    colbox.appendChild(b);
+  });
+
+  table.querySelectorAll('tbody tr').forEach(function (tr) {
+    var th = tr.querySelector('th');
+    if (!th) return;
+    var op = th.textContent.trim();
+    if (!(op in byOp)) return;
+    tr.tabIndex = 0;
+    tr.setAttribute('role', 'button');
+    tr.setAttribute('aria-label', 'Explain ' + op);
+    function pick() {
+      var on = tr.classList.contains('picked');
+      clearCols(); clearRows();
+      if (on) { tell(''); return; }
+      tr.classList.add('picked');
+      tell('<b>' + op + '</b> &mdash; ' + byOp[op]);
+    }
+    tr.addEventListener('click', pick);
+    tr.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); }
+    });
   });
 })();
 </script>
