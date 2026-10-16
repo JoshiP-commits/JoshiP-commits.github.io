@@ -17,8 +17,8 @@
 /* Layout: dark full-bleed hero, then a clean 50rem reading column.
    Figures break out to 74rem and scroll inside their own wrapper. */
 :root {
-  --paper:#fbfaf7; --surface:#f2f1ec; --ink:#15191a; --muted:#5d6a6b;
-  --rule:#ddddd6; --accent:#0c6460; --accent-weak:#0c646015; --rust:#b4502c;
+  --paper:#ffffff; --surface:#f5f5f5; --ink:#1a1c1c; --muted:#5a6162;
+  --rule:#e4e4e4; --accent:#0c6460; --accent-weak:#0c646012; --rust:#b4502c;
   --s-eager:#2a78d6; --s-kernel:#1baf7a; --s-bar:#0c6460;
   --lane-a:#fdf3ea; --lane-b:#eef4fb;
   --n-agent-f:#fde4cf; --n-agent-s:#d9833f;
@@ -50,35 +50,54 @@
 *,*::before,*::after { box-sizing:border-box }
 html { -webkit-text-size-adjust:100% }
 body { margin:0; background:var(--paper); color:var(--ink);
-  font-family:var(--font-text); font-size:1.125rem; line-height:1.62; font-optical-sizing:auto }
+  font-family:var(--font-text); font-size:1.27rem; line-height:1.62; font-optical-sizing:auto }
 
 .hero { background:
     repeating-linear-gradient(180deg, rgba(255,255,255,.016) 0 1px, transparent 1px 3px),
     radial-gradient(110% 70% at 50% -20%, #2b2b15 0%, rgba(43,43,21,0) 60%), var(--hero-bg);
-  color:var(--hero-ink); border-bottom:1px solid var(--hero-rule) }
-.hero-in { max-width:50rem; margin-inline:auto;
+  color:var(--hero-ink); border-top:3px solid var(--hero-accent);
+  border-bottom:1px solid var(--hero-rule) }
+.hero-in { max-width:52rem; margin-inline:auto; text-align:center;
   padding-left:max(20px, env(safe-area-inset-left,0px));
   padding-right:max(20px, env(safe-area-inset-right,0px));
-  padding-block:2rem 2.5rem }
+  padding-block:1.5rem 2.7rem }
+.hero-top { text-align:left; margin-bottom:2.3rem }
 .back { font-family:var(--font-mono); font-size:0.78rem; text-decoration:none }
 .hero .back { color:var(--hero-muted) }
 .hero .back:hover { color:var(--hero-accent) }
-h1 { margin:1.5rem 0 0; font-family:var(--font-display); font-weight:600;
-  font-size:clamp(3rem,11vw,6rem); line-height:0.9; letter-spacing:0.005em;
+.venue { margin:0 auto 1.1rem; max-width:none; font-family:var(--font-mono); font-size:0.92rem;
+  letter-spacing:0.07em; text-transform:uppercase; color:var(--hero-muted);
+  line-height:1.5; text-wrap:balance }
+@media (min-width:60rem){ .venue { margin-inline:-3.5rem } }
+@media (max-width:30rem){ .venue { font-size:0.82rem; letter-spacing:0.04em } }
+.venue .tag { color:var(--hero-accent); white-space:nowrap }
+h1 { margin:0; font-family:var(--font-display); font-weight:600;
+  font-size:clamp(2.9rem,12vw,6.6rem); line-height:0.88; letter-spacing:0.004em;
   text-transform:uppercase; color:var(--hero-ink) }
-h1 .lit { color:var(--hero-accent) }
-.rule { width:5.5rem; height:3px; background:var(--hero-accent); margin:1.05rem 0 1.15rem }
-.sub { margin:0 0 1.4rem; max-width:34rem; color:var(--hero-muted); font-size:1.1rem }
-.meta { margin:0; font-family:var(--font-mono); font-size:0.76rem; color:var(--hero-muted) }
-.meta .tag { display:inline-block; margin-left:0.45rem; padding:0.1em 0.5em; border-radius:2px;
-  background:#9ec7271f; color:var(--hero-accent); font-weight:500; text-transform:uppercase;
-  font-size:0.66rem; letter-spacing:0.05em }
-.authors { margin:0.7rem 0 0; font-size:1rem; color:var(--hero-ink) }
-.authors .aff { color:var(--hero-muted); font-size:0.9rem }
-.toplinks { display:flex; flex-wrap:wrap; gap:0.4rem 1.1rem; margin:1.4rem 0 0; padding:0;
-  list-style:none; font-family:var(--font-mono); font-size:0.82rem }
-.toplinks a { color:var(--hero-ink); text-decoration:none; border-bottom:1px solid #3a3f2e }
-.toplinks a:hover { color:var(--hero-accent); border-bottom-color:var(--hero-accent) }
+h1 .lit { color:var(--hero-accent); text-shadow:0 0 30px rgba(158,199,39,0.22) }
+.tagline { margin:0.9rem auto 0; max-width:34rem; color:var(--hero-muted);
+  font-size:1.1rem; line-height:1.45; text-wrap:balance }
+.rule { width:5.5rem; height:3px; background:var(--hero-accent); margin:1.5rem auto 1.4rem }
+.authors { margin:0 auto; max-width:none; font-size:1.32rem; font-weight:500;
+  letter-spacing:0.002em; color:#f7f4e9 }
+.authors sup { color:var(--hero-accent); font-size:0.62em; font-weight:400 }
+.affs { margin:0.55rem auto 0; max-width:none; font-size:1.08rem; color:#cdcfbc }
+.affs sup { color:var(--hero-accent); font-size:0.7em }
+.toplinks { display:flex; flex-wrap:wrap; justify-content:center; gap:0.55rem;
+  margin:1.85rem 0 0; padding:0; list-style:none }
+.toplinks a { display:inline-flex; align-items:center; gap:0.5rem;
+  padding:0.52rem 1.1rem; border-radius:999px; text-decoration:none;
+  font-family:var(--font-mono); font-size:0.79rem; letter-spacing:0.02em;
+  color:var(--hero-ink); background:#1d2218; border:1px solid #343c29;
+  transition:background 140ms ease, border-color 140ms ease, color 140ms ease }
+.toplinks a:hover { background:#252e1b; border-color:var(--hero-accent); color:var(--hero-accent) }
+.toplinks a:focus-visible { outline:2px solid var(--hero-accent); outline-offset:2px }
+.toplinks svg { width:14px; height:14px; flex:none; fill:none; stroke:currentColor;
+  stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round }
+.toplinks svg.solid { fill:currentColor; stroke:none }
+.toplinks .soon { display:inline-flex; align-items:center; gap:0.5rem;
+  padding:0.52rem 1.1rem; border-radius:999px; font-family:var(--font-mono);
+  font-size:0.79rem; color:var(--hero-muted); border:1px dashed #343c29 }
 .headline { display:grid; grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));
   gap:1px; margin:1.9rem 0 0; background:var(--hero-rule); border:1px solid var(--hero-rule) }
 .headline div { background:var(--hero-bg); padding:1rem 1.1rem 1.05rem }
@@ -89,8 +108,20 @@ h1 .lit { color:var(--hero-accent) }
 .headline dd small { display:block; margin-top:0.2rem; font-family:var(--font-mono);
   font-size:0.68rem; color:var(--hero-muted); font-weight:400 }
 
+.tldr { background:var(--surface); border-bottom:1px solid var(--rule) }
+.tldr-in { max-width:48rem; margin-inline:auto; text-align:center;
+  padding-left:max(20px, env(safe-area-inset-left,0px));
+  padding-right:max(20px, env(safe-area-inset-right,0px));
+  padding-block:3.1rem 3.3rem }
+.tldr h2 { margin:0 0 1.5rem; font-family:var(--font-display); font-weight:600;
+  font-size:clamp(2.1rem,6.5vw,3.2rem); line-height:1; letter-spacing:0.012em;
+  text-transform:uppercase; color:var(--ink) }
+.tldr h2 .lit { color:var(--accent) }
+.tldr p { max-width:none; text-align:left }
+.tldr p:last-child { margin-bottom:0 }
+
 /* eyebrow labels above section headings */
-.eyebrow { font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.16em;
+.eyebrow { font-family:var(--font-mono); font-size:0.73rem; letter-spacing:0.16em;
   text-transform:uppercase; color:var(--accent); margin:3.4rem 0 0.3rem }
 .eyebrow + h2 { margin-top:0 }
 
@@ -98,14 +129,14 @@ h1 .lit { color:var(--hero-accent) }
 figure.framed { border:1px solid var(--rule); border-radius:4px; background:var(--surface);
   padding:1.15rem 1.15rem 1rem }
 .figlabel { display:flex; align-items:baseline; gap:0.6rem; margin-bottom:0.85rem;
-  font-family:var(--font-mono); font-size:0.64rem; letter-spacing:0.12em;
+  font-family:var(--font-mono); font-size:0.71rem; letter-spacing:0.12em;
   text-transform:uppercase; color:var(--muted) }
 .figlabel b { color:var(--accent); font-weight:600; letter-spacing:0.1em }
 figure.framed figcaption { margin-left:0; margin-right:0; max-width:46rem }
 
 /* pull quote for the central finding */
 blockquote.pull { margin:2.25rem 0 0; padding:0.2rem 0 0.2rem 1.5rem;
-  border-left:3px solid var(--accent); font-size:1.3rem; line-height:1.42;
+  border-left:3px solid var(--accent); font-size:1.5rem; line-height:1.4;
   max-width:33rem; color:var(--ink) }
 blockquote.pull strong { color:var(--accent); font-weight:600 }
 blockquote.pull cite { display:block; margin-top:0.7rem; font-family:var(--font-mono);
@@ -145,17 +176,66 @@ tbody tr:hover { background:var(--accent-weak) }
   font-variant-numeric:tabular-nums; line-height:1 }
 .exp-out .big-l { font-family:var(--font-mono); font-size:0.64rem; letter-spacing:0.12em;
   text-transform:uppercase; color:var(--muted) }
-.exp-note { margin:0.9rem 0 0; font-size:0.95rem; color:var(--muted); max-width:40rem }
+.exp-note { margin:0.9rem 0 0; font-size:1.06rem; color:var(--muted); max-width:46rem }
 .exp-note strong { color:var(--ink); font-weight:600 }
 @media (max-width:34rem){ .barrow { grid-template-columns:5.5rem 1fr 5rem } }
 
-.page { max-width:50rem; margin-inline:auto;
+/* --- editorial restyle: rules instead of cards --- */
+.eyebrow { margin:3.6rem 0 0.5rem }
+h2 { font-size:2.05rem; letter-spacing:-0.022em; line-height:1.12 }
+
+figure.framed, .explorer {
+  background:transparent; border:none; border-radius:0;
+  border-top:2px solid var(--ink); border-bottom:1px solid var(--rule);
+  padding:1.1rem 0 1.25rem;
+}
+.figlabel { margin-bottom:1rem }
+.reach > div { border-radius:0 }
+blockquote.pull { border-left-width:2px }
+pre.block { border-radius:0 }
+.explorer select, .seg, .seg button { border-radius:0 }
+.barrow .track, .barrow .fill { border-radius:0 }
+.headline, .headline div { border-radius:0 }
+
+/* --- walkthrough for the cross-device chart --- */
+#chart-crossdev .hit { fill:transparent }
+#chart-crossdev .dprow { transition:opacity 260ms ease }
+#chart-crossdev .dprow:hover .hit,
+#chart-crossdev .dprow:focus-visible .hit { fill:var(--accent-weak) }
+#chart-crossdev .dprow:focus-visible { outline:none }
+#chart-crossdev .dot-eager, #chart-crossdev .dot-kernel,
+#chart-crossdev .connect, #chart-crossdev .ve, #chart-crossdev .vk,
+#chart-crossdev .nk, #chart-crossdev .g-pred { transition:opacity 260ms ease }
+#chart-crossdev[data-focus="pred"] .dprow { opacity:.2 }
+#chart-crossdev[data-focus="eager"] .dot-kernel,
+#chart-crossdev[data-focus="eager"] .vk,
+#chart-crossdev[data-focus="eager"] .connect,
+#chart-crossdev[data-focus="eager"] .nk { opacity:.1 }
+#chart-crossdev[data-focus="kernel"] .dot-eager,
+#chart-crossdev[data-focus="kernel"] .ve { opacity:.1 }
+#chart-crossdev[data-focus="nokernel"] .dprow { opacity:.16 }
+#chart-crossdev[data-focus="nokernel"] .dprow.nokernel { opacity:1 }
+
+.walk { display:flex; flex-wrap:wrap; align-items:center; gap:0.6rem 0.9rem; margin:1rem 0 0 }
+.walk button { font-family:var(--font-mono); font-size:0.76rem; padding:0.35rem 0.85rem;
+  background:transparent; color:var(--accent); border:1px solid var(--accent);
+  cursor:pointer; border-radius:0 }
+.walk button:hover { background:var(--accent); color:var(--paper) }
+.walk button:focus-visible { outline:2px solid var(--accent); outline-offset:2px }
+.walk .dots { display:flex; gap:0.35rem }
+.walk .dots i { width:6px; height:6px; background:var(--rule); display:block }
+.walk .dots i.on { background:var(--accent) }
+.walk .count { font-family:var(--font-mono); font-size:0.7rem; color:var(--muted) }
+.walk-say { margin:0.85rem 0 0; font-size:1.1rem; color:var(--ink); max-width:46rem; min-height:3em }
+.walk-say b { color:var(--accent); font-weight:600 }
+
+.page { max-width:48rem; margin-inline:auto;
   padding-left:max(20px, env(safe-area-inset-left,0px));
   padding-right:max(20px, env(safe-area-inset-right,0px));
   padding-block:0.5rem 3rem }
-h2 { margin:3.25rem 0 0.9rem; font-size:1.45rem; font-weight:500; letter-spacing:-0.01em }
-h3 { margin:2rem 0 0.5rem; font-size:1.05rem; font-weight:600 }
-p  { margin:0 0 1rem; max-width:36rem }
+h2 { margin:3.25rem 0 0.9rem; font-size:1.65rem; font-weight:500; letter-spacing:-0.01em }
+h3 { margin:2rem 0 0.5rem; font-size:1.2rem; font-weight:600 }
+p  { margin:0 0 1.1rem; max-width:none }
 a  { color:var(--accent); text-underline-offset:2px }
 code { font-family:var(--font-mono); font-size:0.86em }
 strong { font-weight:600 }
@@ -166,9 +246,9 @@ strong { font-weight:600 }
 .steps li::before { content:"Stage " counter(step); position:absolute; left:0; top:0.15rem;
   font-family:var(--font-mono); font-size:0.6rem; letter-spacing:0.08em;
   text-transform:uppercase; color:var(--muted); width:2.6rem; line-height:1.3 }
-.steps h4 { margin:0 0 0.25rem; font-size:1.02rem; font-weight:600 }
+.steps h4 { margin:0 0 0.3rem; font-size:1.15rem; font-weight:600 }
 .steps h4 code { font-size:0.84em; color:var(--accent); font-weight:500 }
-.steps p { margin:0; font-size:1rem }
+.steps p { margin:0; font-size:1.12rem }
 
 .reach { display:grid; grid-template-columns:repeat(auto-fit,minmax(14rem,1fr)); gap:1rem; margin:1.5rem 0 0 }
 .reach > div { min-width:0; padding:0.95rem 1.1rem; border-radius:3px }
@@ -176,7 +256,7 @@ strong { font-weight:600 }
 .reach .no  { background:var(--surface); border-left:2px solid var(--rust) }
 .reach h4 { margin:0 0 0.5rem; font-family:var(--font-mono); font-size:0.68rem;
   letter-spacing:0.07em; text-transform:uppercase; color:var(--muted) }
-.reach ul { margin:0; padding-left:1.05rem; font-family:var(--font-mono); font-size:0.82rem; line-height:1.85 }
+.reach ul { margin:0; padding-left:1.05rem; font-family:var(--font-mono); font-size:0.9rem; line-height:1.85 }
 .reach li { overflow-wrap:anywhere }
 
 figure { margin:1.75rem 0 0 }
@@ -184,7 +264,7 @@ figure { margin:1.75rem 0 0 }
 .scroller { overflow-x:auto; -webkit-overflow-scrolling:touch }
 svg.loop  { display:block; width:100%; min-width:1040px; height:auto }
 svg.chart { display:block; width:100%; min-width:30rem; height:auto }
-figcaption { margin:0.75rem auto 0; font-size:0.95rem; color:var(--muted); max-width:42rem; line-height:1.55 }
+figcaption { margin:0.8rem auto 0; font-size:1.06rem; color:var(--muted); max-width:46rem; line-height:1.55 }
 figcaption b { color:var(--ink); font-weight:600 }
 
 svg.loop .lane-synth { fill:var(--lane-a) }
@@ -246,21 +326,22 @@ svg.chart .dot-eager { fill:var(--s-eager); stroke:var(--paper); stroke-width:2 
 svg.chart .dot-kernel { fill:var(--s-kernel); stroke:var(--paper); stroke-width:2 }
 
 .legend { display:flex; flex-wrap:wrap; gap:0.4rem 1.25rem; margin:0.75rem auto 0; padding:0;
-  list-style:none; font-family:var(--font-mono); font-size:0.78rem; color:var(--muted); max-width:42rem }
+  list-style:none; font-family:var(--font-mono); font-size:0.86rem; color:var(--muted); max-width:42rem }
 .legend li { display:flex; align-items:center; gap:0.45rem }
 .legend .swatch { width:10px; height:10px; border-radius:50%; flex:none }
 
 .tablewrap { overflow-x:auto; margin:1.5rem 0 0 }
-table { border-collapse:collapse; font-size:0.9rem; min-width:34rem; width:100% }
-caption { caption-side:top; text-align:left; padding-bottom:0.6rem; font-size:0.92rem; color:var(--muted) }
+table { border-collapse:collapse; font-size:0.99rem; min-width:34rem; width:100% }
+caption { caption-side:top; text-align:left; padding-bottom:0.6rem; font-size:1.01rem; color:var(--muted) }
 th,td { padding:0.4rem 0.7rem; text-align:right; border-bottom:1px solid var(--rule); font-variant-numeric:tabular-nums }
 thead th { font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.05em; text-transform:uppercase; color:var(--muted); font-weight:500 }
 tbody th { text-align:left; font-weight:400; white-space:nowrap }
 td.em { font-weight:600; color:var(--accent) }
-tfoot td, tfoot th { border-bottom:none; padding-top:0.7rem; font-size:0.86rem; color:var(--muted) }
+tfoot td, tfoot th { border-bottom:none; padding-top:0.7rem; font-size:0.94rem; color:var(--muted) }
 
+.note { margin:0.8rem 0 0; font-size:1.02rem; color:var(--muted) }
 pre.block { margin:1rem 0 0; padding:1rem 1.1rem; overflow-x:auto; background:var(--surface);
-  border-left:2px solid var(--rule); font-family:var(--font-mono); font-size:0.76rem; line-height:1.65 }
+  border-left:2px solid var(--rule); font-family:var(--font-mono); font-size:0.84rem; line-height:1.65 }
 footer { margin-top:4rem; padding-top:1.25rem; border-top:1px solid var(--rule);
   font-family:var(--font-mono); font-size:0.72rem; color:var(--muted) }
 a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-radius:2px }
@@ -273,24 +354,31 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
 
 <header class="hero">
   <div class="hero-in">
-    <a class="back" href="../">&#8592; Joshi Penta</a>
+    <div class="hero-top"><a class="back" href="../">&#8592; Joshi Penta</a></div>
+    <p class="venue">A3: Agentic Approaches to Architecture, MICRO 2026
+      <span class="tag">(Paper + Poster)</span></p>
     <h1>Graph<span class="lit">Synth</span></h1>
-    <div class="rule"></div>
-    <p class="sub">
+    <p class="tagline">
       Agentic Triton kernel synthesis for non-standard attention,
       verified across GPU generations.
     </p>
-    <p class="meta">A3: Agentic Approaches to Architecture, MICRO 2026 <span class="tag">Paper + Poster</span></p>
-    <p class="authors">
-      Joshi Penta &#183; Priyesh Shukla<br>
-      <span class="aff">IIIT Hyderabad, India</span>
-    </p>
+    <div class="rule"></div>
+    <p class="authors">Joshi Penta<sup>1</sup>, Priyesh Shukla<sup>1</sup></p>
+    <p class="affs"><sup>1</sup>International Institute of Information Technology
+      &ndash; Hyderabad, India</p>
     <ul class="toplinks">
-      <li><a href="../assets/graphsynth-a3-micro-2026.pdf">Paper</a></li>
-      <li><a href="https://github.com/JoshiP-commits/CHIA_HACKATHON">Code</a></li>
-      <li><a href="../assets/graphsynth-poster.pdf">Poster</a></li>
-      <li><a href="#reproduce">Reproduce</a></li>
-      <li><a href="#cite">BibTeX</a></li>
+      <li><a href="../assets/graphsynth-a3-micro-2026.pdf">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 1.5h6l3.5 3.5v9h-9.5z"/><path d="M9.5 1.5v3.5h3.5"/></svg>Paper</a></li>
+      <li><span class="soon">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2.5H2.5v11h11V10"/><path d="M9.5 2.5h4v4"/><path d="M13.5 2.5 7.5 8.5"/></svg>arXiv &#183; soon</span></li>
+      <li><a href="https://github.com/JoshiP-commits/CHIA_HACKATHON">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 4.5 2 8l3.5 3.5"/><path d="M10.5 4.5 14 8l-3.5 3.5"/></svg>Code</a></li>
+      <li><a href="../assets/graphsynth-poster.pdf">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="2.5" width="11" height="8.5"/><path d="M8 11v2.5"/><path d="M5.5 13.5h5"/></svg>Poster</a></li>
+      <li><a href="#reproduce">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2.5" width="12" height="11"/><path d="M4.8 6 7 8l-2.2 2"/><path d="M8.4 10.3h3"/></svg>Reproduce</a></li>
+      <li><a href="#cite">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6.5 2.5c-2 0-2 1.5-2 2.5s0 2-1.5 2.5c1.5.5 1.5 1.5 1.5 2.5s0 2.5 2 2.5"/><path d="M9.5 2.5c2 0 2 1.5 2 2.5s0 2 1.5 2.5c-1.5.5-1.5 1.5-1.5 2.5s0 2.5-2 2.5"/></svg>BibTeX</a></li>
     </ul>
     <dl class="headline">
       <div><dt>Verified, A100</dt><dd>10 / 10<small>all ten variants</small></dd></div>
@@ -301,21 +389,24 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
   </div>
 </header>
 
-<div class="page">
+<section class="tldr">
+  <div class="tldr-in">
+    <h2>TL<span class="lit">;</span>DR</h2>
+    <p>
+      Every new attention variant loses PyTorch's fast kernel. GraphSynth writes a
+      replacement. A language model produces the Triton code, a separate stage
+      checks it against PyTorch, and a third stage times it on a GPU. The model
+      cannot call the checker or the timer.
+    </p>
+    <p>
+      It produced a correct kernel for all ten variants we tested. We then ran the
+      same kernels on a second GPU. The reported speedup went from 10.82&#215; to
+      32.02&#215;, and the kernels had not changed.
+    </p>
+  </div>
+</section>
 
-  <p class="eyebrow">In one minute</p>
-  <h2>Summary</h2>
-  <p>
-    Every new attention variant loses PyTorch's fast kernel. GraphSynth writes a
-    replacement. A language model produces the Triton code, a separate stage
-    checks it against PyTorch, and a third stage times it on a GPU. The model
-    cannot call the checker or the timer.
-  </p>
-  <p>
-    It produced a correct kernel for all ten variants we tested. We then ran the
-    same kernels on a second GPU. The reported speedup went from 10.82&#215; to
-    32.02&#215;, and the kernels had not changed.
-  </p>
+<div class="page">
 
   <p class="eyebrow">The problem</p>
   <h2>The gap</h2>
@@ -659,7 +750,7 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
   <figure class="breakout framed">
     <p class="figlabel"><b>Fig. 3</b> L40S over A100 latency ratio</p>
     <div class="scroller">
-<svg viewBox="0 0 590 328" role="img" aria-labelledby="c2t" class="chart">
+<svg id="chart-crossdev" viewBox="0 0 590 328" aria-labelledby="c2t" class="chart">
 <title id="c2t">L40S over A100 latency ratio for the eager baseline and the synthesized kernel</title>
 <line x1="175.6" y1="34" x2="175.6" y2="294" class="grid"/>
 <text x="175.6" y="310" class="tick" text-anchor="middle">0.5&#215;</text>
@@ -669,73 +760,111 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
 <text x="413.3" y="310" class="tick" text-anchor="middle">1.5&#215;</text>
 <line x1="532.1" y1="34" x2="532.1" y2="294" class="grid"/>
 <text x="532.1" y="310" class="tick" text-anchor="middle">2.0&#215;</text>
-<line x1="294.5" y1="34" x2="294.5" y2="294" class="parity"/>
-<line x1="484.6" y1="20" x2="484.6" y2="294" class="refline"/>
-<text x="478.6" y="16" class="reflabel" text-anchor="end">1.800&#215; predicted from bandwidth</text>
+<g class="g-parity"><line x1="294.5" y1="34" x2="294.5" y2="294" class="parity"/></g>
+<g class="g-pred"><line x1="484.6" y1="20" x2="484.6" y2="294" class="refline"/><text x="478.6" y="16" class="reflabel" text-anchor="end">1.800&#215; predicted from bandwidth</text></g>
+<g class="dprow" data-i="0" data-op="soft-capping" data-er="1.876" data-kr="0.69" tabindex="0" role="listitem">
+<rect class="hit" x="8" y="42" width="578" height="23"/>
 <text x="130" y="57" class="cat" text-anchor="end">soft-capping</text>
 <line x1="220.6" y1="53" x2="502.6" y2="53" class="connect"/>
 <circle cx="220.6" cy="53" r="5" class="dot-kernel"/>
-<text x="211.6" y="57" class="val-s" text-anchor="end">0.69</text>
+<text x="211.6" y="57" class="val-s vk" text-anchor="end">0.69</text>
 <circle cx="502.6" cy="53" r="5" class="dot-eager"/>
-<text x="511.6" y="57" class="val-s">1.876</text>
+<text x="511.6" y="57" class="val-s ve">1.876</text>
+</g>
+<g class="dprow" data-i="1" data-op="prefix-LM" data-er="1.818" data-kr="0.72" tabindex="0" role="listitem">
+<rect class="hit" x="8" y="67" width="578" height="23"/>
 <text x="130" y="82" class="cat" text-anchor="end">prefix-LM</text>
 <line x1="227.7" y1="78" x2="488.9" y2="78" class="connect"/>
 <circle cx="227.7" cy="78" r="5" class="dot-kernel"/>
-<text x="218.7" y="82" class="val-s" text-anchor="end">0.72</text>
+<text x="218.7" y="82" class="val-s vk" text-anchor="end">0.72</text>
 <circle cx="488.9" cy="78" r="5" class="dot-eager"/>
-<text x="497.9" y="82" class="val-s">1.818</text>
+<text x="497.9" y="82" class="val-s ve">1.818</text>
+</g>
+<g class="dprow" data-i="2" data-op="block-diagonal" data-er="1.817" data-kr="0.69" tabindex="0" role="listitem">
+<rect class="hit" x="8" y="92" width="578" height="23"/>
 <text x="130" y="107" class="cat" text-anchor="end">block-diagonal</text>
 <line x1="219.6" y1="103" x2="488.6" y2="103" class="connect"/>
 <circle cx="219.6" cy="103" r="5" class="dot-kernel"/>
-<text x="210.6" y="107" class="val-s" text-anchor="end">0.69</text>
+<text x="210.6" y="107" class="val-s vk" text-anchor="end">0.69</text>
 <circle cx="488.6" cy="103" r="5" class="dot-eager"/>
-<text x="497.6" y="107" class="val-s">1.817</text>
+<text x="497.6" y="107" class="val-s ve">1.817</text>
+</g>
+<g class="dprow" data-i="3" data-op="sliding-window" data-er="1.805" data-kr="0.62" tabindex="0" role="listitem">
+<rect class="hit" x="8" y="117" width="578" height="23"/>
 <text x="130" y="132" class="cat" text-anchor="end">sliding-window</text>
 <line x1="204.4" y1="128" x2="485.8" y2="128" class="connect"/>
 <circle cx="204.4" cy="128" r="5" class="dot-kernel"/>
-<text x="195.4" y="132" class="val-s" text-anchor="end">0.62</text>
+<text x="195.4" y="132" class="val-s vk" text-anchor="end">0.62</text>
 <circle cx="485.8" cy="128" r="5" class="dot-eager"/>
-<text x="494.8" y="132" class="val-s">1.805</text>
+<text x="494.8" y="132" class="val-s ve">1.805</text>
+</g>
+<g class="dprow" data-i="4" data-op="local window" data-er="1.802" data-kr="0.61" tabindex="0" role="listitem">
+<rect class="hit" x="8" y="142" width="578" height="23"/>
 <text x="130" y="157" class="cat" text-anchor="end">local window</text>
 <line x1="200.8" y1="153" x2="485.1" y2="153" class="connect"/>
 <circle cx="200.8" cy="153" r="5" class="dot-kernel"/>
-<text x="191.8" y="157" class="val-s" text-anchor="end">0.61</text>
+<text x="191.8" y="157" class="val-s vk" text-anchor="end">0.61</text>
 <circle cx="485.1" cy="153" r="5" class="dot-eager"/>
-<text x="494.1" y="157" class="val-s">1.802</text>
+<text x="494.1" y="157" class="val-s ve">1.802</text>
+</g>
+<g class="dprow" data-i="5" data-op="dilated" data-er="1.797" data-kr="0.62" tabindex="0" role="listitem">
+<rect class="hit" x="8" y="167" width="578" height="23"/>
 <text x="130" y="182" class="cat" text-anchor="end">dilated</text>
 <line x1="203.2" y1="178" x2="483.9" y2="178" class="connect"/>
 <circle cx="203.2" cy="178" r="5" class="dot-kernel"/>
-<text x="194.2" y="182" class="val-s" text-anchor="end">0.62</text>
+<text x="194.2" y="182" class="val-s vk" text-anchor="end">0.62</text>
 <circle cx="483.9" cy="178" r="5" class="dot-eager"/>
-<text x="492.9" y="182" class="val-s">1.797</text>
+<text x="492.9" y="182" class="val-s ve">1.797</text>
+</g>
+<g class="dprow nokernel" data-i="6" data-op="per-head temp" data-er="1.764" tabindex="0" role="listitem">
+<rect class="hit" x="8" y="192" width="578" height="23"/>
 <text x="130" y="207" class="cat" text-anchor="end">per-head temp</text>
-<text x="180.4" y="207" class="val-s">no kernel passed the gate</text>
+<text x="180.4" y="207" class="val-s nk">no kernel passed the gate</text>
 <circle cx="476.0" cy="203" r="5" class="dot-eager"/>
-<text x="485.0" y="207" class="val-s">1.764</text>
+<text x="485.0" y="207" class="val-s ve">1.764</text>
+</g>
+<g class="dprow" data-i="7" data-op="sigmoid attention" data-er="1.760" data-kr="0.55" tabindex="0" role="listitem">
+<rect class="hit" x="8" y="217" width="578" height="23"/>
 <text x="130" y="232" class="cat" text-anchor="end">sigmoid attention</text>
 <line x1="188.0" y1="228" x2="475.1" y2="228" class="connect"/>
 <circle cx="188.0" cy="228" r="5" class="dot-kernel"/>
-<text x="179.0" y="232" class="val-s" text-anchor="end">0.55</text>
+<text x="179.0" y="232" class="val-s vk" text-anchor="end">0.55</text>
 <circle cx="475.1" cy="228" r="5" class="dot-eager"/>
-<text x="484.1" y="232" class="val-s">1.760</text>
+<text x="484.1" y="232" class="val-s ve">1.760</text>
+</g>
+<g class="dprow" data-i="8" data-op="ALiBi bias" data-er="1.759" data-kr="0.62" tabindex="0" role="listitem">
+<rect class="hit" x="8" y="242" width="578" height="23"/>
 <text x="130" y="257" class="cat" text-anchor="end">ALiBi bias</text>
 <line x1="205.1" y1="253" x2="474.8" y2="253" class="connect"/>
 <circle cx="205.1" cy="253" r="5" class="dot-kernel"/>
-<text x="196.1" y="257" class="val-s" text-anchor="end">0.62</text>
+<text x="196.1" y="257" class="val-s vk" text-anchor="end">0.62</text>
 <circle cx="474.8" cy="253" r="5" class="dot-eager"/>
-<text x="483.8" y="257" class="val-s">1.759</text>
+<text x="483.8" y="257" class="val-s ve">1.759</text>
+</g>
+<g class="dprow" data-i="9" data-op="ReLU attention" data-er="1.750" data-kr="0.88" tabindex="0" role="listitem">
+<rect class="hit" x="8" y="267" width="578" height="23"/>
 <text x="130" y="282" class="cat" text-anchor="end">ReLU attention</text>
 <line x1="266.4" y1="278" x2="472.7" y2="278" class="connect"/>
 <circle cx="266.4" cy="278" r="5" class="dot-kernel"/>
-<text x="257.4" y="282" class="val-s" text-anchor="end">0.88</text>
+<text x="257.4" y="282" class="val-s vk" text-anchor="end">0.88</text>
 <circle cx="472.7" cy="278" r="5" class="dot-eager"/>
-<text x="481.7" y="282" class="val-s">1.750</text>
+<text x="481.7" y="282" class="val-s ve">1.750</text>
+</g>
 </svg>
     </div>
     <ul class="legend">
       <li><span class="swatch" style="background:var(--s-eager)"></span>eager baseline</li>
       <li><span class="swatch" style="background:var(--s-kernel)"></span>synthesized kernel</li>
     </ul>
+    <div class="walk">
+      <button type="button" id="walk-btn">Explain this chart</button>
+      <span class="dots" id="walk-dots" aria-hidden="true"></span>
+      <span class="count" id="walk-count"></span>
+      <button type="button" id="walk-reset" hidden>Reset</button>
+    </div>
+    <p class="walk-say" id="walk-say">
+      Hover any row for its two numbers, or step through the explanation.
+    </p>
     <figcaption>
       <b>Eager latency ratios land within &#177;3.5% of 1.800&#215;.</b> Every
       accepted kernel is below 1.0, which means it is faster on the device with
@@ -1057,6 +1186,78 @@ geometric mean speedup over eager: 10.83x</pre>
   bA.addEventListener('click', function () { setDev('a100'); });
   bL.addEventListener('click', function () { setDev('l40s'); });
   render();
+})();
+</script>
+
+<script>
+(function () {
+  var svg = document.getElementById('chart-crossdev');
+  var btn = document.getElementById('walk-btn');
+  if (!svg || !btn) return;
+  var say = document.getElementById('walk-say');
+  var dots = document.getElementById('walk-dots');
+  var count = document.getElementById('walk-count');
+  var reset = document.getElementById('walk-reset');
+  var idle = say.textContent;
+
+  var STEPS = [
+    ['', 'Each row is one of the ten operators. The axis is <b>L40S latency divided by A100 latency</b>, so 1.0 means the two GPUs tie.'],
+    ['pred', 'The dashed line is a prediction made before measuring. The L40S has 864 GB/s of memory bandwidth against the A100\u2019s 1555, so anything limited by memory should be <b>1555/864 = 1.800\u00d7 slower</b>.'],
+    ['eager', 'Blue is the eager PyTorch baseline. Every point lands <b>within \u00b13.5% of that line</b> \u2014 which is exactly what a memory-bound workload should do.'],
+    ['kernel', 'Green is the synthesized kernel. Every one sits <b>below 1.0</b>: faster on the GPU with less bandwidth, because it never writes the score matrix to memory at all.'],
+    ['nokernel', 'One row has no green point. <b>per-head temp</b> never compiled on the L40S \u2014 its block sizes assume 164 KB of shared memory per SM, and Ada offers 100 KB.']
+  ];
+  var i = -1;
+
+  STEPS.forEach(function () { dots.appendChild(document.createElement('i')); });
+  var pips = dots.querySelectorAll('i');
+
+  function show(n) {
+    i = n;
+    var st = STEPS[n];
+    if (st[0]) { svg.setAttribute('data-focus', st[0]); } else { svg.removeAttribute('data-focus'); }
+    say.innerHTML = st[1];
+    pips.forEach(function (p, k) { p.classList.toggle('on', k === n); });
+    count.textContent = (n + 1) + ' of ' + STEPS.length;
+    reset.hidden = false;
+    btn.textContent = n === STEPS.length - 1 ? 'Start over' : 'Next';
+  }
+  function clear() {
+    i = -1;
+    svg.removeAttribute('data-focus');
+    say.textContent = idle;
+    pips.forEach(function (p) { p.classList.remove('on'); });
+    count.textContent = '';
+    reset.hidden = true;
+    btn.textContent = 'Explain this chart';
+  }
+  btn.addEventListener('click', function () {
+    if (i >= STEPS.length - 1) { show(0); return; }
+    show(i + 1);
+  });
+  reset.addEventListener('click', clear);
+
+  // Hovering a row reports that row, without disturbing a walkthrough step.
+  svg.querySelectorAll('.dprow').forEach(function (g) {
+    function tell() {
+      if (i !== -1) return;
+      var op = g.getAttribute('data-op'), er = g.getAttribute('data-er'), kr = g.getAttribute('data-kr');
+      if (!kr) {
+        say.innerHTML = '<b>' + op + '</b> \u2014 eager is ' + er +
+          '\u00d7 slower on the L40S. No kernel passed the gate there.';
+        return;
+      }
+      var off = Math.abs(parseFloat(er) - 1.8) / 1.8 * 100;
+      say.innerHTML = '<b>' + op + '</b> \u2014 eager ' + er + '\u00d7 (' +
+        off.toFixed(1) + '% from the 1.800\u00d7 prediction), kernel ' + kr +
+        '\u00d7, so the kernel is ' + (1 / parseFloat(kr)).toFixed(2) + '\u00d7 faster on the L40S.';
+    }
+    function untell() { if (i === -1) say.textContent = idle; }
+    g.addEventListener('mouseenter', tell);
+    g.addEventListener('mouseleave', untell);
+    g.addEventListener('focus', tell);
+    g.addEventListener('blur', untell);
+  });
 })();
 </script>
 </body>
