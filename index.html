@@ -3,16 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark only">
 <title>Joshi Penta</title>
-<meta name="description" content="Joshi Penta — SARCS Research Group, International Institute of Information Technology, Hyderabad. Ex-AMD. Agentic systems for GPU kernel synthesis and performance verification.">
+<meta name="description" content="Joshi Penta — 1st year MS by Research in CSE, SARCS Research Group, International Institute of Information Technology, Hyderabad. Advisor: Prof. Priyesh Shukla. Ex-AMD. Agentic systems for GPU kernel synthesis and performance verification.">
 
 <!-- Open Graph: controls how the link looks when shared -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="Joshi Penta">
-<meta property="og:description" content="SARCS Research Group, International Institute of Information Technology, Hyderabad. Ex-AMD. Agentic systems for GPU kernel synthesis and performance verification.">
+<meta property="og:description" content="1st year MS by Research in CSE, SARCS Research Group, International Institute of Information Technology, Hyderabad. Advisor: Prof. Priyesh Shukla. Ex-AMD. Agentic systems for GPU kernel synthesis and performance verification.">
 <meta property="og:url" content="https://joship-commits.github.io/">
 
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230c6460'/><path d='M7 23 L13 23 L13 13 L19 13 L19 23 L25 23' fill='none' stroke='%23f7f7f4' stroke-width='2.4' stroke-linejoin='round' stroke-linecap='round'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2305070b'/><circle cx='16' cy='16' r='5.5' fill='none' stroke='%23e8a33d' stroke-width='2'/><ellipse cx='16' cy='16' rx='11' ry='3.4' fill='none' stroke='%23e8a33d' stroke-width='1.4' opacity='.75'/></svg>">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,34 +22,25 @@
 <style>
 /* Layout: one left-aligned column of prose, max 68ch, with a mono label rail
    in the left margin that collapses to a line above each block on phones. */
+/* ================= Interstellar palette =================
+   Deep space black, cold starlight for text, and a single amber accent
+   borrowed from the glow of an accretion disc. One appearance for every
+   visitor: no prefers-color-scheme switch. */
 :root {
-  --paper:       #fbfaf7;
-  --surface:     #f2f1ec;
-  --ink:         #15191a;
-  --muted:       #5d6a6b;
-  --rule:        #ddddd6;
-  --accent:      #0c6460;
-  --accent-weak: #0c646015;
+  --paper:       #05070b;
+  --surface:     #0c1219;
+  --ink:         #dde6f1;
+  --muted:       #7e8ea1;
+  --rule:        #1b2634;
+  --accent:      #e8a33d;
+  --accent-weak: #e8a33d1f;
+  --star:        #cfe0f5;
 
   --font-text: "Newsreader", Georgia, "Times New Roman", serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  color-scheme: light;
+  color-scheme: dark;
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper:       #101414;
-    --surface:     #171d1d;
-    --ink:         #e8e7e1;
-    --muted:       #98a4a4;
-    --rule:        #2a3333;
-    --accent:      #5fc9bf;
-    --accent-weak: #5fc9bf1a;
-    color-scheme: dark;
-  }
-}
-
 *, *::before, *::after { box-sizing: border-box; }
 
 html { -webkit-text-size-adjust: 100%; }
@@ -254,21 +246,264 @@ a:focus-visible {
   .readout dl { grid-template-columns: 1fr; gap: 0; }
   .readout dd { text-align: left; margin-bottom: 0.35rem; }
 }
+
+/* ---------- the sky ---------- */
+
+body { position: relative; }
+
+/* three star layers, drifting at different rates so the field has depth */
+.sky { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
+.sky span { position: absolute; inset: -60% -60%; display: block;
+  will-change: transform; }
+
+.sky .far {
+    background-image:
+      radial-gradient(1.0px 1.0px at 235px 290px, #c9dcff4d, transparent 55%),
+      radial-gradient(0.8px 0.8px at 264px 304px, #ffffff55, transparent 55%),
+      radial-gradient(1.0px 1.0px at 415px 266px, #ffe6c24d, transparent 55%),
+      radial-gradient(0.8px 0.8px at 318px 410px, #ffffff55, transparent 55%),
+      radial-gradient(0.8px 0.8px at 232px 159px, #ffffff55, transparent 55%),
+      radial-gradient(0.8px 0.8px at 279px 359px, #ffe6c24d, transparent 55%),
+      radial-gradient(0.8px 0.8px at 206px 235px, #ffe6c24d, transparent 55%),
+      radial-gradient(0.8px 0.8px at 11px 274px, #ffffff55, transparent 55%),
+      radial-gradient(0.8px 0.8px at 22px 101px, #ffe6c24d, transparent 55%),
+      radial-gradient(1.0px 1.0px at 19px 402px, #c9dcff4d, transparent 55%),
+      radial-gradient(0.8px 0.8px at 229px 306px, #ffe6c24d, transparent 55%),
+      radial-gradient(1.0px 1.0px at 123px 331px, #c9dcff4d, transparent 55%),
+      radial-gradient(0.8px 0.8px at 6px 343px, #c9dcff4d, transparent 55%),
+      radial-gradient(1.0px 1.0px at 339px 146px, #ffe6c24d, transparent 55%),
+      radial-gradient(1.0px 1.0px at 46px 366px, #c9dcff4d, transparent 55%),
+      radial-gradient(1.0px 1.0px at 392px 121px, #ffffff55, transparent 55%),
+      radial-gradient(0.8px 0.8px at 39px 292px, #c9dcff4d, transparent 55%),
+      radial-gradient(1.0px 1.0px at 59px 152px, #ffffff55, transparent 55%),
+      radial-gradient(0.8px 0.8px at 12px 354px, #ffffff55, transparent 55%),
+      radial-gradient(1.0px 1.0px at 111px 30px, #c9dcff4d, transparent 55%),
+      radial-gradient(1.0px 1.0px at 366px 207px, #ffffff55, transparent 55%),
+      radial-gradient(0.8px 0.8px at 293px 326px, #ffe6c24d, transparent 55%),
+      radial-gradient(0.8px 0.8px at 142px 176px, #c9dcff4d, transparent 55%),
+      radial-gradient(1.0px 1.0px at 174px 11px, #ffffff55, transparent 55%),
+      radial-gradient(0.8px 0.8px at 72px 130px, #ffffff55, transparent 55%),
+      radial-gradient(1.0px 1.0px at 34px 242px, #ffffff55, transparent 55%);
+    background-size: 420px 420px;
+    animation: drift 420s linear infinite;
+}
+.sky .mid {
+    background-image:
+      radial-gradient(1.3px 1.3px at 290px 100px, #ffdca866, transparent 55%),
+      radial-gradient(1.3px 1.3px at 101px 71px, #ffdca866, transparent 55%),
+      radial-gradient(1.3px 1.3px at 200px 63px, #d7e6ff77, transparent 55%),
+      radial-gradient(1.3px 1.3px at 112px 4px, #ffdca866, transparent 55%),
+      radial-gradient(1.1px 1.1px at 159px 14px, #ffffff88, transparent 55%),
+      radial-gradient(1.1px 1.1px at 205px 312px, #ffffff88, transparent 55%),
+      radial-gradient(1.3px 1.3px at 78px 113px, #d7e6ff77, transparent 55%),
+      radial-gradient(1.3px 1.3px at 8px 316px, #d7e6ff77, transparent 55%),
+      radial-gradient(1.1px 1.1px at 201px 41px, #ffffff88, transparent 55%),
+      radial-gradient(1.1px 1.1px at 110px 302px, #ffffff88, transparent 55%),
+      radial-gradient(1.3px 1.3px at 311px 192px, #ffdca866, transparent 55%),
+      radial-gradient(1.3px 1.3px at 236px 69px, #ffdca866, transparent 55%),
+      radial-gradient(1.1px 1.1px at 73px 201px, #ffdca866, transparent 55%),
+      radial-gradient(1.1px 1.1px at 82px 163px, #ffdca866, transparent 55%),
+      radial-gradient(1.1px 1.1px at 131px 101px, #ffdca866, transparent 55%),
+      radial-gradient(1.1px 1.1px at 326px 287px, #ffdca866, transparent 55%);
+    background-size: 340px 340px;
+    animation: drift 260s linear infinite;
+}
+.sky .near {
+    background-image:
+      radial-gradient(2.2px 2.2px at 202px 251px, #ffffffcc, transparent 55%),
+      radial-gradient(1.6px 1.6px at 219px 28px, #ffffffcc, transparent 55%),
+      radial-gradient(1.9px 1.9px at 23px 266px, #ffffffcc, transparent 55%),
+      radial-gradient(1.9px 1.9px at 204px 135px, #ffd9a0aa, transparent 55%),
+      radial-gradient(2.2px 2.2px at 255px 154px, #ffffffcc, transparent 55%),
+      radial-gradient(1.6px 1.6px at 39px 68px, #dbe9ffaa, transparent 55%),
+      radial-gradient(1.6px 1.6px at 41px 147px, #ffffffcc, transparent 55%),
+      radial-gradient(1.9px 1.9px at 12px 39px, #dbe9ffaa, transparent 55%),
+      radial-gradient(1.6px 1.6px at 232px 131px, #ffffffcc, transparent 55%);
+    background-size: 280px 280px;
+    animation: drift 150s linear infinite;
+}
+
+@keyframes drift { from { transform: translate3d(0,0,0) }
+                   to   { transform: translate3d(-420px,-420px,0) } }
+
+/* the disc: a wide amber bloom above the fold, like light spilling over a
+   horizon. Pure CSS, no image. */
+.glow { position: fixed; z-index: -1; pointer-events: none;
+  left: 50%; top: -34vh; width: 170vw; height: 80vh; transform: translateX(-50%);
+  background:
+    radial-gradient(48% 46% at 50% 52%, rgba(232,163,61,0.17) 0%,
+                    rgba(232,163,61,0.07) 38%, rgba(232,163,61,0) 70%),
+    radial-gradient(70% 60% at 50% 55%, rgba(78,126,186,0.10) 0%,
+                    rgba(78,126,186,0) 72%);
+}
+
+/* a faint horizon line the content sits above */
+.page { position: relative; z-index: 1; }
+
+/* ---------- type, restated for the dark field ---------- */
+
+h1 {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 5.2vw, 2.9rem);
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: #f2f7ff;
+  text-shadow: 0 0 34px rgba(207,224,245,0.28);
+}
+
+header { padding-bottom: 1.6rem; border-bottom: 1px solid var(--rule); }
+
+.standfirst { max-width: 38rem }
+.standfirst a { color: var(--ink); text-decoration-color: var(--rule) }
+.standfirst a:hover { color: var(--accent); text-decoration-color: var(--accent) }
+
+.rail { color: var(--accent); opacity: 0.85 }
+
+h2 { color: #eef3fa }
+
+.links a { color: var(--ink) }
+
+/* telemetry panel */
+.readout {
+  background: linear-gradient(180deg, rgba(12,18,25,0.92), rgba(8,12,18,0.92));
+  border: 1px solid var(--rule);
+  border-left: 2px solid var(--accent);
+  box-shadow: inset 0 0 40px rgba(78,126,186,0.05);
+}
+
+.pub h3 { color: #eef3fa }
+.authors .me { color: var(--accent) }
+
+::selection { background: rgba(232,163,61,0.26) }
+
+/* ---------- portrait left, intro right ---------- */
+
+header.intro {
+  display: grid;
+  grid-template-columns: 14.5rem 1fr;
+  gap: 0 2.6rem;
+  align-items: start;
+}
+
+.portrait {
+  margin: 0;
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  box-shadow: 0 0 0 1px rgba(232,163,61,0.10),
+              0 0 46px rgba(232,163,61,0.10),
+              inset 0 0 50px rgba(78,126,186,0.07);
+  background: #080c12;
+}
+
+.portrait img { display: block; width: 100%; height: 100%; object-fit: cover }
+
+/* placeholder while assets/profile.jpg is missing: a lit limb, not a broken icon */
+.portrait.empty {
+  background:
+    radial-gradient(38% 38% at 36% 32%, rgba(232,163,61,0.26), rgba(232,163,61,0) 70%),
+    radial-gradient(60% 60% at 62% 70%, rgba(78,126,186,0.18), rgba(78,126,186,0) 72%),
+    #080c12;
+}
+
+.intro-text > :first-child { margin-top: 0 }
+.intro-text .standfirst { max-width: 32rem }
+
+@media (max-width: 42rem) {
+  header.intro { grid-template-columns: 1fr; gap: 1.4rem }
+  .portrait { width: 9.5rem }
+}
+
+/* ---------- news timeline ---------- */
+
+.news { list-style: none; margin: 0; padding: 0 }
+
+.news li {
+  display: grid;
+  grid-template-columns: 9.5rem 1fr;
+  gap: 0 1.6rem;
+  padding-block: 1.15rem;
+  border-top: 1px solid var(--rule);
+}
+.news li:first-child { border-top: none; padding-top: 0 }
+.news li:last-child  { padding-bottom: 0 }
+
+.when {
+  margin: 0;
+  padding-top: 0.34rem;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.news .what p { margin: 0; max-width: 36rem }
+.news .what p + p { margin-top: 0.55rem }
+
+.attach a {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-weak);
+}
+.attach a:hover { border-bottom-color: var(--accent) }
+
+@media (max-width: 42rem) {
+  .news li { grid-template-columns: 1fr; gap: 0.35rem }
+  .when { padding-top: 0 }
+}
+
+/* a section may omit its rail label; the prose column stays put */
+.body { grid-column: 2 }
+@media (max-width: 42rem) { .body { grid-column: 1 } }
+
+
+/* ---------- intro: three bright lines ---------- */
+
+.standfirst { margin: 0; max-width: 34rem; font-size: 1.12rem; color: #f3f7fd }
+.standfirst p { margin: 0 0 0.42rem; max-width: none }
+.standfirst p:last-child { margin-bottom: 0 }
+
+.standfirst a { color: inherit; text-decoration: none;
+  border-bottom: 1px solid rgba(232,163,61,0.45); padding-bottom: 1px }
+.standfirst a:hover { color: var(--accent); border-bottom-color: var(--accent) }
+
+.intro-text h1 { margin-bottom: 1.15rem }
 </style>
 </head>
 
 <body>
+<div class="sky" aria-hidden="true"><span class="far"></span><span class="mid"></span><span class="near"></span></div>
+<div class="glow" aria-hidden="true"></div>
 <div class="page">
 
-  <header>
-    <h1>Joshi Penta</h1>
-    <!-- EDIT: your degree and year, e.g. "MS by Research (2nd year)" -->
-    <p class="standfirst">
-      Part of <a href="https://sarcslab.org/">SARCS Research Group</a>,
-      <a href="https://www.iiit.ac.in/">International Institute of Information
-      Technology, Hyderabad</a>. Ex-AMD.
-      I work on AI systems that write code.
-    </p>
+  <header class="intro">
+    <!-- EDIT: drop your photo in at assets/profile.jpg (square crop reads best).
+         Until it exists the frame shows a placeholder disc. -->
+    <figure class="portrait">
+      <img src="assets/profile.jpg" alt="Joshi Penta"
+           onerror="this.parentNode.classList.add('empty'); this.remove();">
+    </figure>
+
+    <div class="intro-text">
+    <h1>Joshi P</h1>
+    <div class="standfirst">
+      <p>
+        I&rsquo;m Joshi, 1st year MS by Research in CSE, part of
+        <a href="https://sarcslab.org/">SARCS Research Group</a>,
+        <a href="https://www.iiit.ac.in/">International Institute of Information
+        Technology, Hyderabad</a>. Ex-AMD.
+      </p>
+      <p>
+        Advisor:
+        <a href="https://www.iiit.ac.in/faculty/priyesh-shukla/">Prof. Priyesh Shukla</a>.
+      </p>
+      <p>I work on AI systems that write code.</p>
+    </div>
 
     <ul class="links">
       <li><a href="mailto:joshi.penta@research.iiit.ac.in">Email</a></li>
@@ -278,9 +513,63 @@ a:focus-visible {
       <li><a href="https://www.linkedin.com/in/joshi-p-0557b4223">LinkedIn</a></li>
       <li><a href="cv.pdf">CV</a></li>
     </ul>
+    </div>
   </header>
 
   <main>
+
+    <section>
+      <div class="body">
+        <h2>News</h2>
+
+        <ol class="news">
+
+          <li>
+            <p class="when">Oct 2026</p>
+            <div class="what">
+              <p>
+                I am at <a href="https://microarch.org/micro59/">MICRO 2026</a>,
+                held in Athens, Greece, presenting the
+                <a href="graphsynth/">GraphSynth</a> paper at
+                <em>A3: Agentic Approaches to Architecture</em> &mdash; happy to
+                talk about AI systems and deep learning.
+              </p>
+            </div>
+          </li>
+
+          <li>
+            <p class="when">Jun 2025 &ndash; Jul 2026</p>
+            <div class="what">
+              <p>
+                Worked at Advanced Micro Devices (AMD) in the AI Group on Model
+                Performance Analysis, analysing and improving the performance of
+                AI software workloads, and automating architecture migration
+                workflows across multiple AI Engine architectures &mdash;
+                improving efficiency and ensuring scalable, high-performance
+                execution across evolving systems.
+              </p>
+            </div>
+          </li>
+
+          <li>
+            <p class="when">Dec 2023 &ndash; Apr 2025</p>
+            <div class="what">
+              <p>
+                Excited to collaborate with
+                <a href="https://scholar.google.co.in/citations?user=9pl2QhIAAAAJ&amp;hl=en">Prof.&nbsp;SPK</a>
+                on object detection algorithms and attention-based neural
+                networks for precise event time prediction.
+              </p>
+              <!-- EDIT: add the file at assets/LOR_Prof_SPK.pdf -->
+              <p class="attach">
+                <a href="assets/LOR_Prof_SPK.pdf">Letter of recommendation (PDF)</a>
+              </p>
+            </div>
+          </li>
+
+        </ol>
+      </div>
+    </section>
 
     <section>
       <p class="rail">Research</p>
