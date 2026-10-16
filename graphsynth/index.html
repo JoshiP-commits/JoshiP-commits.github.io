@@ -52,18 +52,20 @@ body { margin:0; background:var(--paper); color:var(--ink);
 .back { font-family:var(--font-mono); font-size:0.78rem; text-decoration:none }
 .hero .back { color:var(--hero-muted) }
 .hero .back:hover { color:var(--hero-accent) }
-.venue { margin:0 auto 1.1rem; max-width:none; font-family:var(--font-mono); font-size:0.92rem;
+.venue { margin:1.25rem auto 0; max-width:none; font-family:var(--font-mono); font-size:1.12rem;
   letter-spacing:0.07em; text-transform:uppercase; color:var(--hero-muted);
   line-height:1.5; text-wrap:balance }
 @media (min-width:60rem){ .venue { margin-inline:-3.5rem } }
-@media (max-width:30rem){ .venue { font-size:0.82rem; letter-spacing:0.04em } }
+@media (max-width:30rem){ .venue { font-size:0.95rem; letter-spacing:0.04em } }
 .venue .tag { color:var(--hero-accent); white-space:nowrap }
+.venue .ven { color:#ffffff; white-space:nowrap }
 h1 { margin:0; font-family:var(--font-display); font-weight:600;
   font-size:clamp(2.9rem,12vw,6.6rem); line-height:0.88; letter-spacing:0.004em;
   text-transform:uppercase; color:var(--hero-ink) }
 h1 .lit { color:var(--hero-accent); text-shadow:0 0 30px rgba(158,199,39,0.22) }
-.tagline { margin:0.9rem auto 0; max-width:34rem; color:var(--hero-muted);
-  font-size:1.1rem; line-height:1.45; text-wrap:balance }
+.tagline { margin:1.1rem auto 0; max-width:46rem; color:#ffffff;
+  font-size:clamp(1.5rem,3.7vw,2.25rem); line-height:1.22;
+  letter-spacing:-0.012em; text-wrap:balance }
 .rule { width:5.5rem; height:3px; background:var(--hero-accent); margin:1.5rem auto 1.4rem }
 .authors { margin:0 auto; max-width:none; font-size:1.32rem; font-weight:500;
   letter-spacing:0.002em; color:#f7f4e9 }
@@ -104,7 +106,13 @@ h1 .lit { color:var(--hero-accent); text-shadow:0 0 30px rgba(158,199,39,0.22) }
   font-size:clamp(2.1rem,6.5vw,3.2rem); line-height:1; letter-spacing:0.012em;
   text-transform:uppercase; color:var(--ink) }
 .tldr h2 .lit { color:var(--accent) }
-.tldr p { max-width:none; text-align:left }
+.tldr p { max-width:none; text-align:justify; text-justify:inter-word;
+  hyphens:auto; -webkit-hyphens:auto }
+/* body prose set flush on both edges, same as the TL;DR block */
+.page p:not(.eyebrow):not(.figlabel), .steps p, figcaption, .exp-note {
+  text-align:justify; text-justify:inter-word; hyphens:auto; -webkit-hyphens:auto }
+/* labels stay ragged */
+.page p.eyebrow, .page p.figlabel, .figlabel { text-align:left }
 .tldr p:last-child { margin-bottom:0 }
 
 /* eyebrow labels above section headings */
@@ -342,13 +350,14 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
 <header class="hero">
   <div class="hero-in">
     <div class="hero-top"><a class="back" href="../">&#8592; Joshi Penta</a></div>
-    <p class="venue">A3: Agentic Approaches to Architecture, MICRO 2026
-      <span class="tag">(Paper + Poster)</span></p>
     <h1>Graph<span class="lit">Synth</span></h1>
     <p class="tagline">
       Agentic Triton kernel synthesis for non-standard attention,
       verified across GPU generations.
     </p>
+    <p class="venue">A3: Agentic Approaches to Architecture,
+      <span class="ven">MICRO 2026</span>
+      <span class="tag">(Paper + Poster)</span></p>
     <div class="rule"></div>
     <p class="authors">Joshi Penta<sup>1</sup>, Priyesh Shukla<sup>1</sup></p>
     <p class="affs"><sup>1</sup>International Institute of Information Technology
@@ -1026,9 +1035,9 @@ accepted 10/10
 geometric mean speedup over eager: 10.83x</pre>
   <p style="margin-top:1rem">
     On a bf16 GPU, one flag makes the compiles, the checks and the timing real.
-    Every number on this page comes from <code>results/FINAL_attention.csv</code>,
-    <code>results/FINAL_flexattention.csv</code> and
-    <code>results/L40S_attention.csv</code> in that repository.
+    Every number on this page comes from <code>results/<wbr>FINAL_attention.csv</code>,
+    <code>results/<wbr>FINAL_flexattention.csv</code> and
+    <code>results/<wbr>L40S_attention.csv</code> in that repository.
   </p>
 
   <h2 id="cite">BibTeX</h2>
