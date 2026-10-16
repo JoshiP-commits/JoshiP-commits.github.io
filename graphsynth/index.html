@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GraphSynth</title>
+<meta name="description" content="An agentic Triton kernel-synthesis loop with a correctness gate the model cannot reach. 10/10 operators verified on an A100, re-verified across GPU generations.">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="GraphSynth">
+<meta property="og:description" content="An agentic Triton kernel-synthesis loop with a correctness gate the model cannot reach. A3 @ MICRO 2026.">
+<meta property="og:url" content="https://joship-commits.github.io/graphsynth/">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230c6460'/><path d='M7 23 L13 23 L13 13 L19 13 L19 23 L25 23' fill='none' stroke='%23f7f7f4' stroke-width='2.4' stroke-linejoin='round' stroke-linecap='round'/></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+/* Layout: a single reading column; charts and the stage grid break out wider
+   on desktop and fall back into the column on phones. */
+:root {
+  --paper:       #fbfaf7;
+  --surface:     #f2f1ec;
+  --ink:         #15191a;
+  --muted:       #5d6a6b;
+  --rule:        #ddddd6;
+  --accent:      #0c6460;
+  --accent-weak: #0c646015;
+
+  --s-eager:     #2a78d6;   /* categorical slot 1 */
+  --s-kernel:    #1baf7a;   /* categorical slot 3 */
+  --s-bar:       #0c6460;
+
+  --font-text: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:       #101414;
+    --surface:     #171d1d;
+    --ink:         #e8e7e1;
+    --muted:       #98a4a4;
+    --rule:        #2a3333;
+    --accent:      #5fc9bf;
+    --accent-weak: #5fc9bf1a;
+    --s-eager:     #3987e5;
+    --s-kernel:    #199e70;
+    --s-bar:       #5fc9bf;
+    color-scheme: dark;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  font-optical-sizing: auto;
+}
+
+.page {
+  max-width: 50rem;
+  margin-inline: auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  padding-block: 2.5rem 3rem;
+}
+
+.back {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+.back:hover { color: var(--accent); }
+
+h1 {
+  margin: 1.75rem 0 0.4rem;
+  font-size: clamp(2.2rem, 5.5vw, 2.9rem);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.sub { margin: 0; max-width: 34rem; color: var(--muted); font-size: 1.1rem; }
+
+.venue {
+  margin: 1rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.venue .tag {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0.1em 0.5em;
+  border-radius: 2px;
+  background: var(--accent-weak);
+  color: var(--accent);
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+}
+
+.toplinks {
+  display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem;
+  margin: 1.25rem 0 0; padding: 0; list-style: none;
+  font-family: var(--font-mono); font-size: 0.82rem;
+}
+.toplinks a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
+.toplinks a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+h2 {
+  margin: 3.25rem 0 0.9rem;
+  font-size: 1.5rem; font-weight: 500; letter-spacing: -0.01em;
+}
+h3 {
+  margin: 2rem 0 0.5rem;
+  font-size: 1.12rem; font-weight: 600;
+  font-family: var(--font-mono); letter-spacing: -0.01em;
+}
+p { margin: 0 0 1rem; max-width: 36rem; }
+a { color: var(--accent); text-underline-offset: 2px; }
+code { font-family: var(--font-mono); font-size: 0.86em; }
+
+/* ---------- headline numbers ---------- */
+
+.headline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: 1px;
+  margin: 2.25rem 0 0;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+.headline div { background: var(--paper); padding: 0.9rem 1rem; }
+.headline dt {
+  font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--muted); margin: 0 0 0.3rem;
+}
+.headline dd {
+  margin: 0; font-size: 1.45rem; font-weight: 500;
+  font-variant-numeric: tabular-nums; line-height: 1.1;
+}
+.headline dd small { font-size: 0.72rem; color: var(--muted); font-weight: 400; display: block; margin-top: 0.2rem; font-family: var(--font-mono); }
+
+/* ---------- stage flow ---------- */
+
+.stages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: 0.75rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: stage;
+}
+.stages li {
+  min-width: 0;
+  padding: 0.85rem 0.95rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+}
+.stages li.agentic { border-color: var(--accent); background: var(--accent-weak); }
+.stages .n {
+  display: block;
+  font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem;
+}
+.stages li.agentic .n { color: var(--accent); }
+.stages .fn {
+  display: block;
+  font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500;
+  margin-bottom: 0.3rem; overflow-wrap: anywhere;
+}
+.stages .what { font-size: 0.92rem; line-height: 1.45; color: var(--muted); }
+
+/* ---------- reach / no-reach ---------- */
+
+.reach {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem; margin: 1.5rem 0 0;
+}
+.reach > div { min-width: 0; padding: 0.95rem 1.1rem; border-radius: 3px; }
+.reach .yes { background: var(--accent-weak); border-left: 2px solid var(--accent); }
+.reach .no  { background: var(--surface);     border-left: 2px solid var(--muted); }
+.reach h4 {
+  margin: 0 0 0.5rem; font-family: var(--font-mono);
+  font-size: 0.7rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted);
+}
+.reach ul { margin: 0; padding-left: 1.05rem; font-family: var(--font-mono); font-size: 0.84rem; line-height: 1.8; }
+.reach li { overflow-wrap: anywhere; }
+
+/* ---------- figures & charts ---------- */
+
+figure { margin: 1.5rem 0 0; }
+.wide { max-width: none; }
+
+.chartwrap { overflow-x: auto; }
+svg.chart { display: block; width: 100%; min-width: 30rem; height: auto; }
+
+svg.chart .grid     { stroke: var(--rule); stroke-width: 1; }
+svg.chart .axis     { stroke: var(--muted); stroke-width: 1; }
+svg.chart .tick,
+svg.chart .cat      { font-family: var(--font-mono); font-size: 10px; fill: var(--muted); }
+svg.chart .cat      { font-size: 10.5px; fill: var(--ink); }
+svg.chart .val      { font-family: var(--font-mono); font-size: 10px; font-weight: 500; fill: var(--ink); font-variant-numeric: tabular-nums; }
+svg.chart .val-s    { font-family: var(--font-mono); font-size: 9.5px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+svg.chart .bar      { fill: var(--s-bar); }
+svg.chart .refline  { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 4 3; opacity: 0.55; }
+svg.chart .reflabel { font-family: var(--font-mono); font-size: 9.5px; fill: var(--muted); }
+svg.chart .parity   { stroke: var(--muted); stroke-width: 1; opacity: 0.35; }
+svg.chart .connect  { stroke: var(--rule); stroke-width: 2; }
+svg.chart .dot-eager  { fill: var(--s-eager);  stroke: var(--paper); stroke-width: 2; }
+svg.chart .dot-kernel { fill: var(--s-kernel); stroke: var(--paper); stroke-width: 2; }
+
+figcaption {
+  margin-top: 0.6rem; font-size: 0.92rem; color: var(--muted); max-width: 40rem;
+}
+
+.legend {
+  display: flex; flex-wrap: wrap; gap: 0.4rem 1.25rem;
+  margin: 0.75rem 0 0; padding: 0; list-style: none;
+  font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted);
+}
+.legend li { display: flex; align-items: center; gap: 0.45rem; }
+.legend .swatch { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+
+/* ---------- table ---------- */
+
+.tablewrap { overflow-x: auto; margin: 1.5rem 0 0; }
+table { border-collapse: collapse; font-size: 0.9rem; min-width: 34rem; width: 100%; }
+caption {
+  caption-side: top; text-align: left; padding-bottom: 0.6rem;
+  font-size: 0.92rem; color: var(--muted);
+}
+th, td {
+  padding: 0.4rem 0.7rem; text-align: right;
+  border-bottom: 1px solid var(--rule);
+  font-variant-numeric: tabular-nums;
+}
+thead th {
+  font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--muted); font-weight: 500;
+  border-bottom-width: 1px;
+}
+tbody th { text-align: left; font-weight: 400; white-space: nowrap; }
+td.em { font-weight: 600; color: var(--accent); }
+tfoot td, tfoot th { border-bottom: none; padding-top: 0.7rem; font-size: 0.86rem; color: var(--muted); }
+
+/* ---------- cite ---------- */
+
+pre.cite {
+  margin: 1rem 0 0; padding: 1rem 1.1rem; overflow-x: auto;
+  background: var(--surface); border-left: 2px solid var(--rule);
+  font-family: var(--font-mono); font-size: 0.76rem; line-height: 1.65;
+}
+
+footer {
+  margin-top: 4rem; padding-top: 1.25rem; border-top: 1px solid var(--rule);
+  font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted);
+}
+
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+@media (max-width: 42rem) {
+  body { font-size: 1.06rem; }
+  h2 { margin-top: 2.5rem; }
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+  <a class="back" href="../">&#8592; Joshi Penta</a>
+
+  <h1>GraphSynth</h1>
+  <p class="sub">
+    An agentic loop that writes Triton kernels for attention variants PyTorch
+    has no fast path for &mdash; and cannot reach the gate that judges them.
+  </p>
+
+  <p class="venue">
+    A3: Agentic Approaches to Architecture &middot; MICRO 2026
+    <span class="tag">Paper + Poster</span>
+  </p>
+
+  <ul class="toplinks">
+    <li><a href="../assets/graphsynth-a3-micro-2026.pdf">Paper</a></li>
+    <li><a href="https://github.com/JoshiP-commits/CHIA_HACKATHON">Code</a></li>
+    <li><a href="../assets/graphsynth-poster.pdf">Poster</a></li>
+    <li><a href="#reproduce">Reproduce</a></li>
+  </ul>
+
+  <dl class="headline">
+    <div><dt>Verified, A100</dt><dd>10 / 10<small>all ten operators</small></dd></div>
+    <div><dt>Over eager</dt><dd>10.82&#215;<small>geometric mean</small></dd></div>
+    <div><dt>Over torch.compile</dt><dd>3.04&#215;<small>geometric mean</small></dd></div>
+    <div><dt>Re-verified, L40S</dt><dd>9 / 10<small>at 32.02&#215;</small></dd></div>
+  </dl>
+
+  <h2>The problem</h2>
+  <p>
+    Standard attention has a hand-tuned fused kernel. Change one thing &mdash; add
+    a position bias, mask a sliding window, replace softmax with sigmoid &mdash; and
+    that kernel no longer applies. The fallback writes the full
+    <em>S</em>&#215;<em>S</em> score matrix to DRAM and reads it back, which costs
+    roughly 10&#215;. PyTorch's <code>flex_attention</code> recovers the cases
+    expressible as a score modification plus a block mask; it cannot express a
+    replacement for the normalization at all.
+  </p>
+
+  <h2>The loop</h2>
+  <p>
+    Four stages, persisted by a fifth. Exactly one of them is agentic.
+  </p>
+
+  <ol class="stages">
+    <li>
+      <span class="n">Stage 1</span>
+      <span class="fn">profile_op</span>
+      <span class="what">Classifies the operator against the device roofline. Admitted if memory-bound <em>or</em> not expressible in the fused catalog.</span>
+    </li>
+    <li class="agentic">
+      <span class="n">Stage 2 &middot; agentic</span>
+      <span class="fn">synthesize_kernel</span>
+      <span class="what">A model reads the operator description in words and writes a Triton kernel, using only the two tools below.</span>
+    </li>
+    <li>
+      <span class="n">Stage 3</span>
+      <span class="fn">verify_kernel</span>
+      <span class="what">Compares against the PyTorch reference at two input scales. Failure returns a diagnostic and retries.</span>
+    </li>
+    <li>
+      <span class="n">Stage 4</span>
+      <span class="fn">benchmark_kernel</span>
+      <span class="what">CUDA-event loop timer, plus a bandwidth-utilization check that falsifies the timing method rather than reporting a bad number.</span>
+    </li>
+  </ol>
+
+  <h3>What the model can and cannot reach</h3>
+  <p>
+    This is the part that matters. The correctness gate and the hardware timer are
+    never registered as tools, so the thing deciding whether the model succeeded
+    is not inside the model's search space.
+  </p>
+
+  <div class="reach">
+    <div class="yes">
+      <h4>Reachable &mdash; the agent's entire surface</h4>
+      <ul>
+        <li>gs_workbench &mdash; read, write, smoke_compile</li>
+        <li>gs_attempts &mdash; read-only history</li>
+      </ul>
+    </div>
+    <div class="no">
+      <h4>Not reachable &mdash; never registered as a tool</h4>
+      <ul>
+        <li>verify_kernel</li>
+        <li>benchmark_kernel</li>
+      </ul>
+    </div>
+  </div>
+  <p style="margin-top:1rem">
+    Neither reachable tool reports correctness or latency. <code>smoke_compile</code>
+    answers one question &mdash; does this build &mdash; and its docstring says so in
+    the text the model actually receives.
+  </p>
+
+  <h2>Results on the A100</h2>
+  <p>
+    Ten attention variants, bf16, <em>B</em>=2, <em>H</em>=32, <em>S</em>=2048,
+    <em>D</em>=128. Every kernel below passed the correctness gate before it was
+    timed.
+  </p>
+
+  <figure class="wide">
+    <div class="chartwrap">
+<svg viewBox="0 0 590 328" role="img" aria-labelledby="c1t" class="chart">
+<title id="c1t">GraphSynth speedup over eager PyTorch on the A100, per operator</title>
+<line x1="140.0" y1="26" x2="140.0" y2="294" class="grid"/>
+<text x="140.0" y="310" class="tick" text-anchor="middle">0&#215;</text>
+<line x1="274.7" y1="26" x2="274.7" y2="294" class="grid"/>
+<text x="274.7" y="310" class="tick" text-anchor="middle">10&#215;</text>
+<line x1="409.3" y1="26" x2="409.3" y2="294" class="grid"/>
+<text x="409.3" y="310" class="tick" text-anchor="middle">20&#215;</text>
+<line x1="544.0" y1="26" x2="544.0" y2="294" class="grid"/>
+<text x="544.0" y="310" class="tick" text-anchor="middle">30&#215;</text>
+<line x1="285.6" y1="20" x2="285.6" y2="294" class="refline"/>
+<text x="290.6" y="16" class="reflabel">geometric mean 10.82&#215;</text>
+<text x="130" y="46" class="cat" text-anchor="end">block-diagonal</text>
+<rect x="140.0" y="34" width="383.7" height="15" rx="3" class="bar"/>
+<text x="530.7" y="46" class="val">28.49&#215;</text>
+<text x="130" y="72" class="cat" text-anchor="end">sliding-window</text>
+<rect x="140.0" y="60" width="259.3" height="15" rx="3" class="bar"/>
+<text x="406.3" y="72" class="val">19.25&#215;</text>
+<text x="130" y="98" class="cat" text-anchor="end">ReLU attention</text>
+<rect x="140.0" y="86" width="243.3" height="15" rx="3" class="bar"/>
+<text x="390.3" y="98" class="val">18.07&#215;</text>
+<text x="130" y="124" class="cat" text-anchor="end">ALiBi bias</text>
+<rect x="140.0" y="112" width="176.6" height="15" rx="3" class="bar"/>
+<text x="323.6" y="124" class="val">13.11&#215;</text>
+<text x="130" y="150" class="cat" text-anchor="end">local window</text>
+<rect x="140.0" y="138" width="170.7" height="15" rx="3" class="bar"/>
+<text x="317.7" y="150" class="val">12.67&#215;</text>
+<text x="130" y="176" class="cat" text-anchor="end">soft-capping</text>
+<rect x="140.0" y="164" width="159.1" height="15" rx="3" class="bar"/>
+<text x="306.1" y="176" class="val">11.82&#215;</text>
+<text x="130" y="202" class="cat" text-anchor="end">sigmoid attention</text>
+<rect x="140.0" y="190" width="107.1" height="15" rx="3" class="bar"/>
+<text x="254.1" y="202" class="val">7.95&#215;</text>
+<text x="130" y="228" class="cat" text-anchor="end">prefix-LM</text>
+<rect x="140.0" y="216" width="80.8" height="15" rx="3" class="bar"/>
+<text x="227.8" y="228" class="val">6.00&#215;</text>
+<text x="130" y="254" class="cat" text-anchor="end">per-head temp</text>
+<rect x="140.0" y="242" width="68.4" height="15" rx="3" class="bar"/>
+<text x="215.4" y="254" class="val">5.08&#215;</text>
+<text x="130" y="280" class="cat" text-anchor="end">dilated</text>
+<rect x="140.0" y="268" width="62.5" height="15" rx="3" class="bar"/>
+<text x="209.5" y="280" class="val">4.64&#215;</text>
+<line x1="140.0" y1="26" x2="140.0" y2="294" class="axis"/>
+</svg>
+    </div>
+    <figcaption>
+      Speedup over eager PyTorch, per operator, sorted. Two kernels
+      (block-diagonal, sliding-window) also beat PyTorch's fused FlashAttention
+      path &mdash; not because they are better written, but because their masks are
+      sparser than causal, so a kernel that skips masked blocks does strictly
+      less work.
+    </figcaption>
+  </figure>
+
+  <h2>The same kernels on a second GPU</h2>
+  <p>
+    Re-running on an NVIDIA L40S (Ada, sm89) took the geometric mean from
+    10.82&#215; to 32.02&#215;. <strong>Nothing improved.</strong> The L40S has
+    864&nbsp;GB/s of DRAM bandwidth against the A100's 1555&nbsp;GB/s. The eager
+    baseline is bandwidth-bound, so it got slower; the synthesized kernels never
+    materialize the score matrix, so they did not.
+  </p>
+  <p>
+    That gives a prediction worth testing: if the baseline's runtime is memory
+    traffic and nothing else, it should slow by exactly 1555/864 = 1.800&#215;.
+    Measured across all ten operators: <strong>1.795&#215;</strong>.
+  </p>
+
+  <figure class="wide">
+    <div class="chartwrap">
+<svg viewBox="0 0 590 328" role="img" aria-labelledby="c2t" class="chart">
+<title id="c2t">L40S over A100 latency ratio for the eager baseline and the synthesized kernel</title>
+<line x1="175.6" y1="34" x2="175.6" y2="294" class="grid"/>
+<text x="175.6" y="310" class="tick" text-anchor="middle">0.5&#215;</text>
+<line x1="294.5" y1="34" x2="294.5" y2="294" class="grid"/>
+<text x="294.5" y="310" class="tick" text-anchor="middle">1.0&#215;</text>
+<line x1="413.3" y1="34" x2="413.3" y2="294" class="grid"/>
+<text x="413.3" y="310" class="tick" text-anchor="middle">1.5&#215;</text>
+<line x1="532.1" y1="34" x2="532.1" y2="294" class="grid"/>
+<text x="532.1" y="310" class="tick" text-anchor="middle">2.0&#215;</text>
+<line x1="294.5" y1="34" x2="294.5" y2="294" class="parity"/>
+<line x1="484.6" y1="20" x2="484.6" y2="294" class="refline"/>
+<text x="478.6" y="16" class="reflabel" text-anchor="end">1.800&#215; predicted from bandwidth</text>
+<text x="130" y="57" class="cat" text-anchor="end">soft-capping</text>
+<line x1="220.6" y1="53" x2="502.6" y2="53" class="connect"/>
+<circle cx="220.6" cy="53" r="5" class="dot-kernel"/>
+<text x="211.6" y="57" class="val-s" text-anchor="end">0.69</text>
+<circle cx="502.6" cy="53" r="5" class="dot-eager"/>
+<text x="511.6" y="57" class="val-s">1.876</text>
+<text x="130" y="82" class="cat" text-anchor="end">prefix-LM</text>
+<line x1="227.7" y1="78" x2="488.9" y2="78" class="connect"/>
+<circle cx="227.7" cy="78" r="5" class="dot-kernel"/>
+<text x="218.7" y="82" class="val-s" text-anchor="end">0.72</text>
+<circle cx="488.9" cy="78" r="5" class="dot-eager"/>
+<text x="497.9" y="82" class="val-s">1.818</text>
+<text x="130" y="107" class="cat" text-anchor="end">block-diagonal</text>
+<line x1="219.6" y1="103" x2="488.6" y2="103" class="connect"/>
+<circle cx="219.6" cy="103" r="5" class="dot-kernel"/>
+<text x="210.6" y="107" class="val-s" text-anchor="end">0.69</text>
+<circle cx="488.6" cy="103" r="5" class="dot-eager"/>
+<text x="497.6" y="107" class="val-s">1.817</text>
+<text x="130" y="132" class="cat" text-anchor="end">sliding-window</text>
+<line x1="204.4" y1="128" x2="485.8" y2="128" class="connect"/>
+<circle cx="204.4" cy="128" r="5" class="dot-kernel"/>
+<text x="195.4" y="132" class="val-s" text-anchor="end">0.62</text>
+<circle cx="485.8" cy="128" r="5" class="dot-eager"/>
+<text x="494.8" y="132" class="val-s">1.805</text>
+<text x="130" y="157" class="cat" text-anchor="end">local window</text>
+<line x1="200.8" y1="153" x2="485.1" y2="153" class="connect"/>
+<circle cx="200.8" cy="153" r="5" class="dot-kernel"/>
+<text x="191.8" y="157" class="val-s" text-anchor="end">0.61</text>
+<circle cx="485.1" cy="153" r="5" class="dot-eager"/>
+<text x="494.1" y="157" class="val-s">1.802</text>
+<text x="130" y="182" class="cat" text-anchor="end">dilated</text>
+<line x1="203.2" y1="178" x2="483.9" y2="178" class="connect"/>
+<circle cx="203.2" cy="178" r="5" class="dot-kernel"/>
+<text x="194.2" y="182" class="val-s" text-anchor="end">0.62</text>
+<circle cx="483.9" cy="178" r="5" class="dot-eager"/>
+<text x="492.9" y="182" class="val-s">1.797</text>
+<text x="130" y="207" class="cat" text-anchor="end">per-head temp</text>
+<text x="180.4" y="207" class="val-s">no kernel passed the gate</text>
+<circle cx="476.0" cy="203" r="5" class="dot-eager"/>
+<text x="485.0" y="207" class="val-s">1.764</text>
+<text x="130" y="232" class="cat" text-anchor="end">sigmoid attention</text>
+<line x1="188.0" y1="228" x2="475.1" y2="228" class="connect"/>
+<circle cx="188.0" cy="228" r="5" class="dot-kernel"/>
+<text x="179.0" y="232" class="val-s" text-anchor="end">0.55</text>
+<circle cx="475.1" cy="228" r="5" class="dot-eager"/>
+<text x="484.1" y="232" class="val-s">1.760</text>
+<text x="130" y="257" class="cat" text-anchor="end">ALiBi bias</text>
+<line x1="205.1" y1="253" x2="474.8" y2="253" class="connect"/>
+<circle cx="205.1" cy="253" r="5" class="dot-kernel"/>
+<text x="196.1" y="257" class="val-s" text-anchor="end">0.62</text>
+<circle cx="474.8" cy="253" r="5" class="dot-eager"/>
+<text x="483.8" y="257" class="val-s">1.759</text>
+<text x="130" y="282" class="cat" text-anchor="end">ReLU attention</text>
+<line x1="266.4" y1="278" x2="472.7" y2="278" class="connect"/>
+<circle cx="266.4" cy="278" r="5" class="dot-kernel"/>
+<text x="257.4" y="282" class="val-s" text-anchor="end">0.88</text>
+<circle cx="472.7" cy="278" r="5" class="dot-eager"/>
+<text x="481.7" y="282" class="val-s">1.750</text>
+</svg>
+    </div>
+    <ul class="legend">
+      <li><span class="swatch" style="background:var(--s-eager)"></span>eager baseline</li>
+      <li><span class="swatch" style="background:var(--s-kernel)"></span>synthesized kernel</li>
+    </ul>
+    <figcaption>
+      L40S over A100 latency ratio. Every eager point lands within &#177;3.5% of
+      the bandwidth prediction. Every accepted kernel lands below 1.0 &mdash;
+      faster on the device with less bandwidth. <code>per-head temp</code> is the
+      one operator whose kernel did not port: its block sizes were chosen for the
+      A100's 164&nbsp;KB of shared memory per SM, and Ada offers 100&nbsp;KB.
+    </figcaption>
+  </figure>
+
+  <h2>Per-operator latencies</h2>
+
+  <div class="tablewrap">
+    <table>
+      <caption>Latency in microseconds. Lower is better. A dash means the path cannot express that operator.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Operator</th>
+          <th scope="col">eager</th>
+          <th scope="col">torch.compile</th>
+          <th scope="col">flex_attention</th>
+          <th scope="col">GraphSynth</th>
+          <th scope="col">GraphSynth L40S</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">block-diagonal</th>
+          <td>8252</td>
+          <td>2586</td>
+          <td>261</td>
+          <td class="em">290</td>
+          <td>198</td>
+        </tr>
+        <tr>
+          <th scope="row">sliding-window</th>
+          <td>8333</td>
+          <td>2589</td>
+          <td>226</td>
+          <td class="em">433</td>
+          <td>269</td>
+        </tr>
+        <tr>
+          <th scope="row">ReLU attention</th>
+          <td>8536</td>
+          <td>1998</td>
+          <td>&mdash;</td>
+          <td class="em">472</td>
+          <td>417</td>
+        </tr>
+        <tr>
+          <th scope="row">local window</th>
+          <td>8390</td>
+          <td>2646</td>
+          <td>402</td>
+          <td class="em">662</td>
+          <td>401</td>
+        </tr>
+        <tr>
+          <th scope="row">ALiBi bias</th>
+          <td>11080</td>
+          <td>2629</td>
+          <td>641</td>
+          <td class="em">845</td>
+          <td>527</td>
+        </tr>
+        <tr>
+          <th scope="row">soft-capping</th>
+          <td>10645</td>
+          <td>3139</td>
+          <td>847</td>
+          <td class="em">901</td>
+          <td>620</td>
+        </tr>
+        <tr>
+          <th scope="row">sigmoid attention</th>
+          <td>8537</td>
+          <td>1994</td>
+          <td>&mdash;</td>
+          <td class="em">1074</td>
+          <td>592</td>
+        </tr>
+        <tr>
+          <th scope="row">prefix-LM</th>
+          <td>8336</td>
+          <td>2585</td>
+          <td>557</td>
+          <td class="em">1390</td>
+          <td>1000</td>
+        </tr>
+        <tr>
+          <th scope="row">dilated</th>
+          <td>8441</td>
+          <td>2594</td>
+          <td>571</td>
+          <td class="em">1817</td>
+          <td>1120</td>
+        </tr>
+        <tr>
+          <th scope="row">per-head temp</th>
+          <td>9522</td>
+          <td>2643</td>
+          <td>614</td>
+          <td class="em">1875</td>
+          <td>&mdash;</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th scope="row">coverage</th>
+          <td>10/10</td>
+          <td>10/10</td>
+          <td>8/10</td>
+          <td>10/10</td>
+          <td>9/10</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <p style="margin-top:1.25rem">
+    Read honestly: <code>flex_attention</code> is <strong>1.82&#215; faster than
+    GraphSynth</strong> on the eight operators it can express. The claim here is
+    coverage and automation &mdash; ten of ten, from an operator description in
+    words, with no hand-written pattern or block mask &mdash; not peak performance.
+  </p>
+
+  <h2>What running on real hardware exposed</h2>
+  <p>
+    The measurement stages had never executed on a GPU before this evaluation.
+    Three defects surfaced in the first three runs, none of which a replay could
+    have caught, because a replay bypasses the node bodies. The most useful one:
+  </p>
+  <p>
+    The gate rejected a kernel that was correct. Our reference zeroed masked
+    scores <em>before</em> applying sigmoid, and &#963;(0)&nbsp;=&nbsp;0.5, so
+    every causally masked position was contributing half its value vector to the
+    &ldquo;correct&rdquo; answer. The kernel, which skips masked positions
+    properly, was right. Localizing it took one observation: reporting
+    &#8214;K&#8214;/&#8214;R&#8214; and cosine similarity separately gave
+    0.707 for both, and 0.707&#178;&nbsp;=&nbsp;0.5 identified an output summing
+    over exactly half the terms.
+  </p>
+
+  <h2 id="reproduce">Reproduce it</h2>
+  <p>
+    The replay needs no GPU, no API key and no credentials, and finishes in about
+    a minute. The graph, the Ray scheduling, the MCP tool servers and the attempts
+    database all execute for real; only the node bodies are replayed.
+  </p>
+  <pre class="cite">git clone https://github.com/JoshiP-commits/CHIA_HACKATHON.git
+cd CHIA_HACKATHON
+pip install -r requirements.txt          # Python 3.10-3.12
+python -m chia_loop.loop --bypass chia_loop/configs/bypass_replay.yaml
+
+accepted 10/10
+geometric mean speedup over eager: 10.83x</pre>
+  <p style="margin-top:1rem">
+    On a bf16 GPU, one flag makes the compiles, the verification and the timing
+    real. Every number on this page comes from
+    <code>results/FINAL_attention.csv</code>,
+    <code>results/FINAL_flexattention.csv</code> and
+    <code>results/L40S_attention.csv</code> in that repository.
+  </p>
+
+  <h2>Cite</h2>
+  <pre class="cite">@inproceedings{penta2026graphsynth,
+  title     = {GraphSynth: Agentic Triton Kernel Synthesis for Non-Standard
+               Attention, Verified Across GPU Generations},
+  author    = {Penta, Joshi and Shukla, Priyesh},
+  booktitle = {A3: Agentic Approaches to Architecture, co-located with MICRO},
+  year      = {2026}
+}</pre>
+
+  <footer>
+    Last updated October 2026 &middot;
+    <a href="../">joship-commits.github.io</a>
+  </footer>
+
+</div>
+</body>
+</html>
