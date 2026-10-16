@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
 <title>GraphSynth</title>
 <meta name="description" content="A loop that writes Triton kernels for attention variants PyTorch has no fast path for, checked by a gate the model cannot call. A3 at MICRO 2026.">
 <meta property="og:type" content="article">
@@ -32,20 +33,6 @@
   --font-text:"Newsreader",Georgia,"Times New Roman",serif;
   --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper:#101414; --surface:#171d1d; --ink:#e8e7e1; --muted:#98a4a4;
-    --rule:#2a3333; --accent:#5fc9bf; --accent-weak:#5fc9bf1a; --rust:#d1795f;
-    --s-eager:#3987e5; --s-kernel:#199e70; --s-bar:#5fc9bf;
-    --lane-a:#211a13; --lane-b:#131c26;
-    --n-agent-f:#38281a; --n-agent-s:#c17f42;
-    --n-tool-f:#16301f;  --n-tool-s:#3c996d;
-    --n-stage-f:#152539; --n-stage-s:#5187c2;
-    --n-db-f:#1b2121;    --n-db-s:#7c8686;
-    --danger:#e0786a;
-    color-scheme: dark;
-  }
 }
 *,*::before,*::after { box-sizing:border-box }
 html { -webkit-text-size-adjust:100% }
