@@ -114,6 +114,41 @@ blockquote.pull cite { display:block; margin-top:0.7rem; font-family:var(--font-
 tbody tr { transition:background 120ms ease }
 tbody tr:hover { background:var(--accent-weak) }
 
+/* device explorer */
+.explorer { margin:2rem 0 0; border:1px solid var(--rule); border-radius:4px;
+  background:var(--surface); padding:1.2rem 1.25rem 1.35rem }
+.exp-head { display:flex; flex-wrap:wrap; align-items:center; gap:0.75rem 1.5rem; margin-bottom:1.35rem }
+.exp-label { font-family:var(--font-mono); font-size:0.64rem; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--muted) }
+.seg { display:inline-flex; border:1px solid var(--rule); border-radius:3px; overflow:hidden }
+.seg button { font-family:var(--font-mono); font-size:0.78rem; padding:0.35rem 0.9rem;
+  background:transparent; color:var(--muted); border:none; cursor:pointer }
+.seg button[aria-pressed="true"] { background:var(--accent); color:var(--paper); font-weight:500 }
+.seg button:focus-visible { outline:2px solid var(--accent); outline-offset:-2px }
+.explorer select { font-family:var(--font-mono); font-size:0.78rem; padding:0.33rem 0.5rem;
+  background:var(--paper); color:var(--ink); border:1px solid var(--rule); border-radius:3px }
+
+.bars { display:grid; gap:0.8rem }
+.barrow { display:grid; grid-template-columns:7.5rem 1fr 6rem; align-items:center; gap:0.75rem }
+.barrow .who { font-family:var(--font-mono); font-size:0.74rem; color:var(--muted); min-width:0 }
+.barrow .track { display:block; background:var(--rule); border-radius:2px; height:17px; overflow:hidden }
+.barrow .fill { display:block; height:100%; border-radius:2px; width:0;
+  transition:width 600ms cubic-bezier(.3,.8,.3,1), background 300ms ease }
+.barrow.eager .fill { background:var(--s-eager) }
+.barrow.gs .fill { background:var(--s-kernel) }
+.barrow .num { font-family:var(--font-mono); font-size:0.78rem; text-align:right;
+  font-variant-numeric:tabular-nums; color:var(--ink) }
+
+.exp-out { display:flex; flex-wrap:wrap; align-items:baseline; gap:0.6rem 1.25rem; margin-top:1.3rem;
+  padding-top:1.1rem; border-top:1px solid var(--rule) }
+.exp-out .big { font-size:2.1rem; font-weight:500; color:var(--accent);
+  font-variant-numeric:tabular-nums; line-height:1 }
+.exp-out .big-l { font-family:var(--font-mono); font-size:0.64rem; letter-spacing:0.12em;
+  text-transform:uppercase; color:var(--muted) }
+.exp-note { margin:0.9rem 0 0; font-size:0.95rem; color:var(--muted); max-width:40rem }
+.exp-note strong { color:var(--ink); font-weight:600 }
+@media (max-width:34rem){ .barrow { grid-template-columns:5.5rem 1fr 5rem } }
+
 .page { max-width:50rem; margin-inline:auto;
   padding-left:max(20px, env(safe-area-inset-left,0px));
   padding-right:max(20px, env(safe-area-inset-right,0px));
@@ -589,6 +624,38 @@ a:focus-visible { outline:2px solid var(--accent); outline-offset:3px; border-ra
     <cite>A prediction that could have failed, and did not</cite>
   </blockquote>
 
+
+  <div class="explorer">
+    <div class="exp-head">
+      <span class="exp-label">Operator</span>
+      <select id="exp-op" aria-label="Attention operator"></select>
+      <span class="exp-label">GPU</span>
+      <span class="seg" role="group" aria-label="Device">
+        <button type="button" id="exp-a100" aria-pressed="true">A100</button>
+        <button type="button" id="exp-l40s" aria-pressed="false">L40S</button>
+      </span>
+    </div>
+
+    <div class="bars">
+      <div class="barrow eager">
+        <span class="who">eager PyTorch</span>
+        <span class="track"><span class="fill" id="bar-eager"></span></span>
+        <span class="num" id="num-eager">&mdash;</span>
+      </div>
+      <div class="barrow gs">
+        <span class="who">GraphSynth</span>
+        <span class="track"><span class="fill" id="bar-gs"></span></span>
+        <span class="num" id="num-gs">&mdash;</span>
+      </div>
+    </div>
+
+    <div class="exp-out">
+      <span class="big" id="exp-speedup">&mdash;</span>
+      <span class="big-l">speedup over eager, same device</span>
+    </div>
+    <p class="exp-note" id="exp-note"></p>
+  </div>
+
   <figure class="breakout framed">
     <p class="figlabel"><b>Fig. 3</b> L40S over A100 latency ratio</p>
     <div class="scroller">
@@ -933,6 +1000,63 @@ geometric mean speedup over eager: 10.83x</pre>
     if (idx >= STEPS.length) idx = 0;
     playing = true; btn.textContent = 'Pause'; runStep();
   });
+})();
+</script>
+
+<script>
+(function () {
+  var DATA = [{"op":"ALiBi bias","a100":{"eager":11079.5,"gs":845.0,"sp":13.11},"l40s":{"eager":19493.2,"gs":527.1,"sp":36.98},"er":1.759,"kr":0.624},{"op":"ReLU attention","a100":{"eager":8536.5,"gs":472.5,"sp":18.07},"l40s":{"eager":14937.0,"gs":416.9,"sp":35.83},"er":1.75,"kr":0.882},{"op":"block-diagonal","a100":{"eager":8251.5,"gs":289.6,"sp":28.49},"l40s":{"eager":14994.8,"gs":198.5,"sp":75.54},"er":1.817,"kr":0.685},{"op":"dilated","a100":{"eager":8440.7,"gs":1817.4,"sp":4.64},"l40s":{"eager":15171.2,"gs":1119.7,"sp":13.55},"er":1.797,"kr":0.616},{"op":"local window","a100":{"eager":8390.0,"gs":662.0,"sp":12.67},"l40s":{"eager":15122.8,"gs":401.3,"sp":37.68},"er":1.802,"kr":0.606},{"op":"per-head temp","a100":{"eager":9522.3,"gs":1874.7,"sp":5.08},"l40s":{"eager":16797.3,"gs":null,"sp":null},"er":1.764,"kr":null},{"op":"prefix-LM","a100":{"eager":8335.8,"gs":1389.7,"sp":6.0},"l40s":{"eager":15151.6,"gs":999.6,"sp":15.16},"er":1.818,"kr":0.719},{"op":"sigmoid attention","a100":{"eager":8537.3,"gs":1073.5,"sp":7.95},"l40s":{"eager":15021.7,"gs":592.3,"sp":25.36},"er":1.76,"kr":0.552},{"op":"sliding-window","a100":{"eager":8332.9,"gs":432.8,"sp":19.25},"l40s":{"eager":15042.5,"gs":268.7,"sp":55.98},"er":1.805,"kr":0.621},{"op":"soft-capping","a100":{"eager":10645.0,"gs":900.9,"sp":11.82},"l40s":{"eager":19971.0,"gs":620.5,"sp":32.19},"er":1.876,"kr":0.689}];
+  var MAX = 20000;                       // one pixel scale for both devices
+  var sel = document.getElementById('exp-op');
+  if (!sel) return;
+  var bA = document.getElementById('exp-a100'), bL = document.getElementById('exp-l40s');
+  var fe = document.getElementById('bar-eager'), fg = document.getElementById('bar-gs');
+  var ne = document.getElementById('num-eager'), ng = document.getElementById('num-gs');
+  var out = document.getElementById('exp-speedup'), note = document.getElementById('exp-note');
+  var dev = 'a100', idx = 0;
+
+  DATA.forEach(function (d, i) {
+    var o = document.createElement('option');
+    o.value = i; o.textContent = d.op;
+    if (d.op === 'ALiBi bias') idx = i;
+    sel.appendChild(o);
+  });
+  sel.value = idx;
+
+  function us(v) { return v == null ? '\u2014' : Math.round(v).toLocaleString() + ' \u00b5s'; }
+
+  function render() {
+    var d = DATA[+sel.value], r = d[dev];
+    fe.style.width = Math.min(100, r.eager / MAX * 100) + '%';
+    ne.textContent = us(r.eager);
+    if (r.gs == null) {
+      fg.style.width = '0%'; ng.textContent = '\u2014';
+      out.textContent = '\u2014';
+      note.innerHTML = '<strong>No kernel passed the gate on the L40S.</strong> Its block sizes ' +
+        'assume the A100\u2019s 164 KB of shared memory per SM, and Ada has 100 KB.';
+      return;
+    }
+    fg.style.width = Math.min(100, r.gs / MAX * 100) + '%';
+    ng.textContent = us(r.gs);
+    out.textContent = r.sp.toFixed(2) + '\u00d7';
+
+    var eW = (d.er).toFixed(2), kW = (1 / d.kr).toFixed(2);
+    note.innerHTML = 'Across the two devices, eager is <strong>' + eW +
+      '\u00d7 slower</strong> on the L40S while this kernel is <strong>' + kW +
+      '\u00d7 faster</strong>. The kernel code is identical on both. ' +
+      'The speedup changes because the baseline does.';
+  }
+
+  function setDev(d) {
+    dev = d;
+    bA.setAttribute('aria-pressed', d === 'a100');
+    bL.setAttribute('aria-pressed', d === 'l40s');
+    render();
+  }
+  sel.addEventListener('change', render);
+  bA.addEventListener('click', function () { setDev('a100'); });
+  bL.addEventListener('click', function () { setDev('l40s'); });
+  render();
 })();
 </script>
 </body>
